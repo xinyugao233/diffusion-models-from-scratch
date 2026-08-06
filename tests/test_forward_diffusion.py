@@ -1,3 +1,5 @@
+import math
+
 import torch
 
 from diffusion_models.diffusion.ddpm import predict_x_start_from_noise, q_sample
@@ -59,3 +61,27 @@ def test_q_sample_can_be_algebraically_inverted() -> None:
     reconstructed = predict_x_start_from_noise(x_t, timesteps, known_noise, schedule)
 
     torch.testing.assert_close(reconstructed, x_start, rtol=1e-10, atol=1e-10)
+
+
+def test_q_sample_matches_empirical_conditional_moments() -> None:
+    """Check the sampled conditional mean and variance with stable Monte Carlo.
+
+    With 50,000 scalar float64 samples and true variance 0.25, the standard
+    errors are about 0.0022 for the mean and 0.0016 for the variance. A 0.01
+    absolute tolerance is therefore loose enough to avoid seed-sensitive
+    failures while still detecting materially wrong coefficients.
+    """
+    sample_count = 50_000
+    dtype = torch.float64
+    schedule = build_ddpm_schedule(torch.tensor([0.25], dtype=dtype))
+    x_start = torch.full((sample_count, 1, 1, 1), 2.0, dtype=dtype)
+    timesteps = torch.zeros(sample_count, dtype=torch.long)
+    generator = torch.Generator().manual_seed(11)
+    noise = torch.randn(x_start.shape, generator=generator, dtype=dtype)
+
+    samples = q_sample(x_start, timesteps, schedule, noise)
+
+    expected_mean = math.sqrt(0.75) * 2.0
+    expected_variance = 0.25
+    assert abs(float(samples.mean()) - expected_mean) < 0.01
+    assert abs(float(samples.var(unbiased=True)) - expected_variance) < 0.01

@@ -1,0 +1,14 @@
+image_size: 32
+in_channels: 3
+out_channels: 3
+base_channels: 32
+channel_multipliers: [1, 2]
+residual_blocks_per_level: 1
+normalization: group_norm
+group_norm_groups: 32
+activation: silu
+dropout: 0.0
+attention_resolutions: []
+time_embedding_dim: 128
+downsampling: stride_2_convolution
+upsampling: nearest_neighbor_plus_convolution

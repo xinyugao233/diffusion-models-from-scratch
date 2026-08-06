@@ -10,3 +10,11 @@ using the existing CIFAR-10 copy at
 `../diffusion-memorization-geometry/data/cifar10` and visually inspected. The
 forward grid fixes image index 0 and one noise realization across code
 timesteps `[0,100,250,500,750,999]`.
+
+The authorized Day 2 U-Net milestone is now implemented but uncommitted. Its
+authoritative plan is `docs/plans/unet.md`. The primary architecture uses
+channels `[64,128,128,256]`, two residual blocks per level, 16×16 attention,
+and 12,852,547 trainable parameters. The CPU smoke model uses channels `[32,64]`
+and has 491,107 parameters. The full suite reports 22 passing tests; Ruff lint
+and formatting pass. No dataset download, training, sampling, checkpointing,
+EMA, GPU work, or external compute was performed.

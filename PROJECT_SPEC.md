@@ -68,16 +68,38 @@ docs/
 configs/                  # future training configurations
 ```
 
-## Roadmap
+## DDPM/DDIM MVP roadmap
 
-1. **Foundation:** dataset utilities, visualization, forward derivation,
-   schedules, `q_sample`, and exact-noise inversion.
-2. **Forward validation:** empirical distributional tests.
-3. **Denoiser:** timestep embeddings and a compact U-Net.
-4. **Training:** epsilon-prediction objective, checkpointing, and logging.
-5. **Sampling:** ancestral DDPM sampler and reproducible sample grids.
-6. **Evaluation:** loss curves, sample inspection, and an explicitly specified
-   quantitative evaluation protocol.
+1. **Validated DDPM forward process:** dataset utilities, derivation, linear
+   schedule, `q_sample`, exact-noise inversion, and a small empirical check.
+2. **Time-conditioned U-Net:** readable CIFAR-10 denoiser with residual blocks,
+   timestep conditioning, skip connections, and attention at 16×16.
+3. **Training and tiny-subset overfit:** epsilon-prediction objective and a
+   fixed, reproducible tiny-data integration test.
+4. **EMA and checkpoint-resume:** complete training-state persistence and an
+   exact deterministic resume test.
+5. **DDPM sampling:** ancestral reverse process and sample trajectories.
+6. **DDIM and runtime comparison:** deterministic reduced-step sampling using
+   the same trained denoiser.
+7. **Recruiter-facing presentation:** reproduction commands, figures, results,
+   limitations, and interview-oriented explanations.
+
+The canonical MVP is a tested PyTorch implementation of DDPM and DDIM on
+CIFAR-10 with reproducible training, checkpointing, sampling, and a controlled
+sampling-cost comparison.
+
+## Deferred extensions
+
+The following are explicitly outside the MVP: EDM, flow matching, class
+conditioning, distributed training, large-scale FID sweeps, additional
+datasets, deployment, and web interfaces.
+
+## Current milestone: time-conditioned U-Net
+
+The frozen architecture, interfaces, tensor shapes, tests, parameter budget,
+and stop conditions are defined in `docs/plans/unet.md`. This milestone adds
+CPU CI and one small empirical forward-distribution test. It stops before any
+training, sampling, EMA, checkpointing, or GPU computation.
 
 ## Initial acceptance criteria
 
