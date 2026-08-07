@@ -9,3 +9,11 @@
 - 2026-08-06: Implemented and CPU-validated the frozen time-conditioned
   CIFAR-10 U-Net, added CPU CI and empirical forward-moment validation, and
   recorded primary/smoke parameter counts. No training was started.
+
+## 2026-08-06
+- Created experiment scaffold `exp001-epsilon-prediction-learnability` for `Epsilon prediction learnability`.
+- Added initial index entry for `EXP001`.
+
+- 2026-08-06: Completed `EXP001/try01`; 40-step synthetic and 500-step fixed-16
+  CIFAR-10 CPU gates passed their frozen loss-reduction criteria with finite
+  logs. Recorded the exact manifest, hashes, raw losses, and inspected curve.

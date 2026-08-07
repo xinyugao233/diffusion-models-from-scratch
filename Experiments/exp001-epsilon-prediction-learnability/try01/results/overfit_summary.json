@@ -1,0 +1,143 @@
+{
+  "acceptance": {
+    "late_to_early_max_ratio": 0.8,
+    "window_size": 50
+  },
+  "command": ".venv/bin/python scripts/run_overfit_16.py --config configs/overfit_16.json --download",
+  "completed_normally": true,
+  "config_sha256": "fd0ad4a450a96753ba7d2eced93f8ae457c604e9598f4746c0e78cc66872ad89",
+  "curve": "Experiments/exp001-epsilon-prediction-learnability/try01/figures/overfit_loss_curve.png",
+  "duration_seconds": 102.91066200006753,
+  "early_window_mean": 0.22018398717045784,
+  "environment": {
+    "device": "cpu",
+    "machine": "arm64",
+    "platform": "macOS-26.5.1-arm64-arm-64bit-Mach-O",
+    "python": "3.13.2",
+    "pytorch": "2.13.0",
+    "torch_num_threads": 1
+  },
+  "final_gradient_norm": 0.09202578135145548,
+  "final_loss": 0.05263952910900116,
+  "git": {
+    "commit": "26e735e597001251d92075d5bf02fb5649851800",
+    "working_tree_dirty": true
+  },
+  "gradient_norm_max": 1.7093292148813992,
+  "gradient_norm_mean": 0.12254032378756975,
+  "gradient_norm_min": 0.04976637215035423,
+  "initial_gradient_norm": 1.7093292148813992,
+  "initial_loss": 1.0944936275482178,
+  "instability_or_nan": false,
+  "late_to_early_ratio": 0.19925437172699,
+  "late_window_mean": 0.043872622027993205,
+  "loss_csv": "Experiments/exp001-epsilon-prediction-learnability/try01/results/overfit_loss.csv",
+  "manifest": {
+    "archive_md5": "c58f30108f718f92721af3b95e74349a",
+    "augmentation": "none",
+    "class_names": [
+      "airplane",
+      "automobile",
+      "bird",
+      "cat",
+      "deer",
+      "dog",
+      "frog",
+      "horse",
+      "ship",
+      "truck"
+    ],
+    "dataset": "CIFAR-10",
+    "download_requested": true,
+    "examples": [
+      {
+        "class_name": "frog",
+        "index": 0,
+        "label": 6
+      },
+      {
+        "class_name": "truck",
+        "index": 1,
+        "label": 9
+      },
+      {
+        "class_name": "truck",
+        "index": 2,
+        "label": 9
+      },
+      {
+        "class_name": "deer",
+        "index": 3,
+        "label": 4
+      },
+      {
+        "class_name": "automobile",
+        "index": 4,
+        "label": 1
+      },
+      {
+        "class_name": "automobile",
+        "index": 5,
+        "label": 1
+      },
+      {
+        "class_name": "bird",
+        "index": 6,
+        "label": 2
+      },
+      {
+        "class_name": "horse",
+        "index": 7,
+        "label": 7
+      },
+      {
+        "class_name": "ship",
+        "index": 8,
+        "label": 8
+      },
+      {
+        "class_name": "cat",
+        "index": 9,
+        "label": 3
+      },
+      {
+        "class_name": "deer",
+        "index": 10,
+        "label": 4
+      },
+      {
+        "class_name": "horse",
+        "index": 11,
+        "label": 7
+      },
+      {
+        "class_name": "horse",
+        "index": 12,
+        "label": 7
+      },
+      {
+        "class_name": "bird",
+        "index": 13,
+        "label": 2
+      },
+      {
+        "class_name": "truck",
+        "index": 14,
+        "label": 9
+      },
+      {
+        "class_name": "truck",
+        "index": 15,
+        "label": 9
+      }
+    ],
+    "normalized_max": 1.0,
+    "normalized_min": -1.0,
+    "split": "train"
+  },
+  "model_parameter_count": 491107,
+  "passed": true,
+  "record_count": 500,
+  "relative_loss_decrease": 0.80074562827301,
+  "training_source_sha256": "86d30856931b8e933f02b71a201e10513170d98f15c8bbe1385f6edc20256287"
+}

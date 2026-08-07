@@ -94,12 +94,13 @@ The following are explicitly outside the MVP: EDM, flow matching, class
 conditioning, distributed training, large-scale FID sweeps, additional
 datasets, deployment, and web interfaces.
 
-## Current milestone: time-conditioned U-Net
+## Current milestone: epsilon-prediction learnability
 
-The frozen architecture, interfaces, tensor shapes, tests, parameter budget,
-and stop conditions are defined in `docs/plans/unet.md`. This milestone adds
-CPU CI and one small empirical forward-distribution test. It stops before any
-training, sampling, EMA, checkpointing, or GPU computation.
+Milestone 3 is complete under `docs/plans/training_and_overfit.md` and
+`EXP001/try01`. The unchanged smoke U-Net passed a deterministic synthetic
+optimization gate and a frozen 16-image CIFAR-10 overfit gate on local CPU.
+This establishes small-dataset epsilon-prediction learnability only. It stops
+before full-dataset training, sampling, EMA, checkpointing, or GPU computation.
 
 ## Initial acceptance criteria
 

@@ -35,13 +35,31 @@ The schedule and forward-process API live under
 `diffusion_models.diffusion`. Mathematical details and the code-index mapping
 are in [docs/ddpm_forward_process.md](docs/ddpm_forward_process.md).
 
+## Reproduce the learnability gates
+
+```bash
+.venv/bin/python scripts/run_synthetic_optimization.py \
+  --config configs/synthetic_optimization.json
+
+.venv/bin/python scripts/run_overfit_16.py \
+  --config configs/overfit_16.json \
+  --download
+```
+
+These immutable experiment outputs already exist in `EXP001/try01`, so reruns
+must use a new numbered try and updated output paths. The completed result and
+its limited scientific interpretation are documented in
+[Reports/milestone_03.md](Reports/milestone_03.md).
+
 ## Layout
 
 - `src/diffusion_models/`: reusable implementation
 - `scripts/`: reproducible entry points
 - `tests/`: inexpensive correctness tests
 - `docs/`: mathematical derivations
-- `configs/`: future frozen run configurations
+- `configs/`: frozen architecture and run configurations
 - `figures/`: generated visual checks
 
-No training experiment has been defined or run yet.
+Milestone 3 verifies only that the epsilon-prediction pipeline can learn a
+fixed 16-image dataset. Reverse sampling and generation quality are not yet
+implemented or evaluated.

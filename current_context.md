@@ -1,20 +1,20 @@
 # Current Context
 
-The repository's first milestone is defined in `PROJECT_SPEC.md`. The package,
-CIFAR-10 loader, inverse normalization, grid script, tests, and forward-process
-derivation are implemented. A local `.venv` contains the declared dependencies.
-The linear schedule, coefficient extraction, closed-form forward sampler, and
-exact-noise reconstruction are also implemented. All seven unit tests and Ruff
-pass. Deterministic seed-0 dataset and forward-process grids were generated
-using the existing CIFAR-10 copy at
-`../diffusion-memorization-geometry/data/cifar10` and visually inspected. The
-forward grid fixes image index 0 and one noise realization across code
-timesteps `[0,100,250,500,750,999]`.
+Milestones 1 and 2 are complete at baseline commit
+`26e735e597001251d92075d5bf02fb5649851800`. The private GitHub repository and
+remote CPU CI are operational; the Milestone 2 workflow passed 22 tests plus
+Ruff lint and formatting. Its Node.js deprecation warning is recorded as
+deferred maintenance debt.
 
-The authorized Day 2 U-Net milestone is now implemented but uncommitted. Its
-authoritative plan is `docs/plans/unet.md`. The primary architecture uses
-channels `[64,128,128,256]`, two residual blocks per level, 16×16 attention,
-and 12,852,547 trainable parameters. The CPU smoke model uses channels `[32,64]`
-and has 491,107 parameters. The full suite reports 22 passing tests; Ruff lint
-and formatting pass. No dataset download, training, sampling, checkpointing,
-EMA, GPU work, or external compute was performed.
+Milestone 3 and `EXP001/try01` are complete. On one local CPU thread, the fixed
+synthetic gate achieved late/early mean-loss ratio `0.010670` over 40 steps and
+the frozen 16-image CIFAR-10 gate achieved `0.199254` over 500 steps; both beat
+the preregistered maximum ratio `0.80`, produced only finite records, and
+completed normally. The fixed subset, hashes, raw logs, loss CSV, visually
+inspected curve, and exact environment are durable under the try folder and
+summarized in `Reports/milestone_03.md`.
+
+The valid conclusion is limited to learnability of the complete fixed-small-data
+epsilon-prediction pipeline. No checkpoint or sampler exists, so generation
+quality and generalization remain untested. Stop here pending review or an
+explicit next-stage request; no commit has been created for Milestone 3.

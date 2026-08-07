@@ -1,0 +1,41 @@
+{
+  "acceptance": {
+    "late_to_early_max_ratio": 0.8,
+    "window_size": 5
+  },
+  "attention_diagnostic": {
+    "first_output_projection_gradient_nonzero": true,
+    "first_qkv_gradient_nonzero": false,
+    "second_qkv_gradient_nonzero": true
+  },
+  "attention_in_smoke_model": false,
+  "command": ".venv/bin/python scripts/run_synthetic_optimization.py --config configs/synthetic_optimization.json",
+  "config_sha256": "02954bbda70206ad9a24e9dbc831b620eacd243ecdbe5baf63f0a19bc01445d3",
+  "duration_seconds": 1.7245008330792189,
+  "early_window_mean": 0.7734420657157898,
+  "environment": {
+    "device": "cpu",
+    "machine": "arm64",
+    "platform": "macOS-26.5.1-arm64-arm-64bit-Mach-O",
+    "python": "3.13.2",
+    "pytorch": "2.13.0",
+    "torch_num_threads": 1
+  },
+  "final_gradient_norm": 0.05949316883690885,
+  "final_loss": 0.00531720370054245,
+  "first_logged_loss": 1.1447415351867676,
+  "git": {
+    "commit": "26e735e597001251d92075d5bf02fb5649851800",
+    "working_tree_dirty": true
+  },
+  "initial_gradient_norm": 1.5313779485955612,
+  "late_to_early_ratio": 0.01066968066879895,
+  "late_window_mean": 0.00825237985700369,
+  "model_parameter_count": 491107,
+  "parameter_changed": true,
+  "passed": true,
+  "record_count": 40,
+  "relative_loss_decrease": 0.9893303193312011,
+  "repository": "/Users/gaoxinyu/Documents/research/Projects/diffusion-models-from-scratch",
+  "training_source_sha256": "86d30856931b8e933f02b71a201e10513170d98f15c8bbe1385f6edc20256287"
+}

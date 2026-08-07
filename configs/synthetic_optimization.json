@@ -1,0 +1,31 @@
+{
+  "acceptance": {
+    "late_to_early_max_ratio": 0.8,
+    "window_size": 5
+  },
+  "batch_size": 4,
+  "device": "cpu",
+  "gradient_clip": 1.0,
+  "model": "smoke_unet",
+  "model_seed": 7,
+  "num_threads": 1,
+  "optimizer": {
+    "betas": [0.9, 0.999],
+    "eps": 1e-08,
+    "learning_rate": 0.001,
+    "name": "AdamW",
+    "weight_decay": 0.0
+  },
+  "output": {
+    "metrics": "Experiments/exp001-epsilon-prediction-learnability/try01/logs/synthetic_metrics.jsonl",
+    "summary": "Experiments/exp001-epsilon-prediction-learnability/try01/results/synthetic_summary.json"
+  },
+  "schedule": {
+    "beta_end": 0.02,
+    "beta_start": 0.0001,
+    "num_steps": 1000
+  },
+  "steps": 40,
+  "synthetic_seed": 11,
+  "timesteps": [0, 100, 500, 999]
+}

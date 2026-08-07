@@ -1,0 +1,49 @@
+date: 2026-08-06
+project: diffusion-models-from-scratch
+experiment: exp001-epsilon-prediction-learnability
+try_number: try01
+goal: Validate epsilon-prediction learnability on synthetic and fixed CIFAR-10 data
+status: COMPLETED
+parent_baseline: Milestone 2
+git_commit: 26e735e597001251d92075d5bf02fb5649851800
+configuration_paths:
+  - configs/synthetic_optimization.json
+  - configs/overfit_16.json
+configuration_hashes:
+  synthetic: 02954bbda70206ad9a24e9dbc831b620eacd243ecdbe5baf63f0a19bc01445d3
+  overfit: fd0ad4a450a96753ba7d2eced93f8ae457c604e9598f4746c0e78cc66872ad89
+dataset: CIFAR-10 training split, fixed indices 0 through 15
+dataset_manifest: configs/cifar10_overfit_16_manifest.json
+checkpoint: null
+random_seeds:
+  synthetic_model: 7
+  synthetic_data: 11
+  overfit_model: 23
+  overfit_sampling: 24
+evaluation_rule: Late-window mean must be <= 0.80 * early-window mean in each gate
+dataset_archive_md5: c58f30108f718f92721af3b95e74349a
+environment: Python 3.13.2, PyTorch 2.13.0, one CPU thread
+hardware: Apple arm64 CPU on macOS 26.5.1
+job_id: null
+output_paths:
+  synthetic: Experiments/exp001-epsilon-prediction-learnability/try01/results/synthetic_summary.json
+  overfit: Experiments/exp001-epsilon-prediction-learnability/try01/results/overfit_summary.json
+expected_record_count:
+  synthetic: 40
+  overfit: 500
+observed_record_count:
+  synthetic: 40
+  overfit: 500
+source_hashes:
+  training_py: 86d30856931b8e933f02b71a201e10513170d98f15c8bbe1385f6edc20256287
+  synthetic_script: f6e542b55191d1d2b4f772ee2fd1b685425b004dce163aac2c60490976160a3c
+  overfit_script: d8abf642406ba32be9909b08a812d446e46370ebbc8f2b7a2d5a719b16ea4418
+results_summary:
+  synthetic_late_to_early_ratio: 0.01066968066879895
+  overfit_late_to_early_ratio: 0.19925437172699
+  synthetic_passed: true
+  overfit_passed: true
+figures:
+  - Experiments/exp001-epsilon-prediction-learnability/try01/figures/overfit_loss_curve.png
+exit_state: Completed normally; both acceptance gates passed
+next_step: Stop at Milestone 3 pending review or explicit next-stage authorization

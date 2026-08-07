@@ -1,0 +1,36 @@
+{
+  "acceptance": {
+    "late_to_early_max_ratio": 0.8,
+    "window_size": 50
+  },
+  "batch_size": 16,
+  "baseline_git_commit": "26e735e597001251d92075d5bf02fb5649851800",
+  "data_root": "data",
+  "device": "cpu",
+  "gradient_clip": 1.0,
+  "manifest": "configs/cifar10_overfit_16_manifest.json",
+  "model": "smoke_unet",
+  "model_seed": 23,
+  "num_threads": 1,
+  "optimizer": {
+    "betas": [0.9, 0.999],
+    "eps": 1e-08,
+    "learning_rate": 0.001,
+    "name": "AdamW",
+    "weight_decay": 0.0
+  },
+  "output": {
+    "curve": "Experiments/exp001-epsilon-prediction-learnability/try01/figures/overfit_loss_curve.png",
+    "loss_csv": "Experiments/exp001-epsilon-prediction-learnability/try01/results/overfit_loss.csv",
+    "metrics": "Experiments/exp001-epsilon-prediction-learnability/try01/logs/overfit_metrics.jsonl",
+    "summary": "Experiments/exp001-epsilon-prediction-learnability/try01/results/overfit_summary.json"
+  },
+  "sampling_seed": 24,
+  "schedule": {
+    "beta_end": 0.02,
+    "beta_start": 0.0001,
+    "num_steps": 1000
+  },
+  "steps": 500,
+  "subset_indices": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+}
