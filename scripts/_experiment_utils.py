@@ -96,7 +96,12 @@ def write_loss_csv(path: str | Path, losses: list[float]) -> Path:
     return destination
 
 
-def save_loss_curve(path: str | Path, losses: list[float]) -> Path:
+def save_loss_curve(
+    path: str | Path,
+    losses: list[float],
+    *,
+    title: str = "Fixed-16 CIFAR-10 epsilon-prediction loss",
+) -> Path:
     """Save a dependency-light, labeled PNG curve for experiment inspection."""
     if len(losses) < 2:
         raise ValueError("At least two losses are required for a curve.")
@@ -136,7 +141,7 @@ def save_loss_curve(path: str | Path, losses: list[float]) -> Path:
         y = top + (maximum - loss) / span * plot_height
         points.append((x, y))
     draw.line(points, fill="#2563eb", width=3)
-    draw.text((left, 24), "Fixed-16 CIFAR-10 epsilon-prediction loss", fill="black")
+    draw.text((left, 24), title, fill="black")
     draw.text((left + plot_width / 2 - 20, height - 38), "Step", fill="black")
     draw.text((14, top - 24), "MSE", fill="black")
     draw.text((left, top + plot_height + 18), "0", fill="black")

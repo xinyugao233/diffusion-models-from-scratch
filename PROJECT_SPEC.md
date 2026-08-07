@@ -94,15 +94,14 @@ The following are explicitly outside the MVP: EDM, flow matching, class
 conditioning, distributed training, large-scale FID sweeps, additional
 datasets, deployment, and web interfaces.
 
-## Current milestone: DDPM reverse sampling
+## Current milestone: first full CIFAR-10 training
 
-Milestone 4 is published at commit `2f13b3f` with green remote CI. Milestone 5
-is complete locally under `docs/plans/ddpm_reverse_sampling.md` and
-`EXP003/try01`: exact posterior arithmetic, epsilon-to-clean reconstruction,
-final-step noise suppression, seeded ancestral sampling, and one finite
-1,000-call random-model trajectory are validated. This establishes structural
-sampling correctness only; no trained-checkpoint or image-quality evaluation
-has been performed.
+Milestone 5 is published at commit `7061038` with green 54-test remote CI.
+Milestone 6 is `READY` locally under `docs/plans/full_cifar10_training.md` and
+`EXP004/try01`: the full-data production trainer, deterministic resume batches,
+logging, fixed-seed EMA evaluation, and Slurm-only execution path pass 61 local
+tests. No real-data optimization has run yet, so no end-to-end training or
+sample-quality conclusion is supported.
 
 ## Initial acceptance criteria
 

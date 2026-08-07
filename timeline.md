@@ -41,3 +41,13 @@
   13 focused sampling tests passed, and the random EMA smoke U-Net completed a
   finite seeded 1,000-call DDPM chain with six visually inspected states. No
   training or image-quality evaluation was performed.
+
+## 2026-08-07
+- Created experiment scaffold `exp004-full-cifar-10-ddpm-training` for `Full CIFAR-10 DDPM training`.
+- Added initial index entry for `EXP004`.
+
+- 2026-08-07: Published Milestone 5 as commit `7061038`; GitHub Actions run
+  `31154154963` passed 54 tests plus Ruff lint and formatting.
+- 2026-08-07: Froze the `EXP004/try01` full CIFAR-10 training plan and
+  implemented deterministic production orchestration plus Slurm-only execution
+  scripts. Local validation reached 61 passing tests; no training was run.

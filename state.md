@@ -1,12 +1,12 @@
 # State
 
-- Status: Milestone 4 is remotely closed; Milestone 5 and `EXP003/try01` are
-  `COMPLETED` locally under `docs/plans/ddpm_reverse_sampling.md`.
-- Baseline commit: `2f13b3f785b6adfd815199b5a6274dd6b5245cee`
-  (`feat: add EMA and reproducible checkpoint resume`).
+- Status: Milestone 5 is remotely closed; Milestone 6 and `EXP004/try01` are
+  `READY` locally under `docs/plans/full_cifar10_training.md`.
+- Baseline commit: `706103861c7d12ff3cb7dee037b6a10514b46b5e`
+  (`feat: add tested ancestral DDPM sampling`).
 - Remote state: private GitHub repository `xinyugao233/diffusion-models-from-scratch`
-  has green push-triggered CPU checks for Milestone 4. Run `31152749677` passed
-  in 46 seconds on 2026-08-07 with 41 tests plus Ruff lint and formatting.
+  has green push-triggered CPU checks for Milestone 5. Run `31154154963` passed
+  on 2026-08-07 with 54 tests plus Ruff lint and formatting.
 - Milestone 2 model state: the primary U-Net has 12,852,547 trainable
   parameters and the smoke U-Net has 491,107. The validated architecture and
   forward-diffusion equations are frozen for Milestone 3.
@@ -58,5 +58,14 @@
 - Scientific conclusion: DDPM ancestral sampling is structurally correct for
   the tested equations and CPU execution. Random-model visuals make no image-
   quality, trained-checkpoint, FID, likelihood, or generalization claim.
-- Immediate next action: review and commit Milestone 5 before trained-checkpoint
-  evaluation or DDIM implementation. Milestone 5 remains uncommitted.
+- Milestone 6 implementation: deterministic step-indexed full-data batches,
+  explicit checked AdamW-then-EMA updates, append-only metrics, checkpoint and
+  fixed-sample cadence, Slurm runtime refusal, CUDA provenance/memory metrics,
+  two-process Gate B resume, and `$SLURM_TMPDIR`-safe cluster scripts.
+- Validation: 61 tests pass; Ruff lint/format, shell syntax, and
+  `git diff --check` pass. Tests are CPU-only and dataset-free.
+- Execution status: no Slurm job, real CIFAR-10 update, checkpoint, throughput,
+  memory, or trained sample exists yet.
+- Immediate next action: publish the exact Milestone 6 run commit, sync it to
+  Hellbender, run the environment/check job, then Gate A. Gate B and the 50k
+  run remain gated.

@@ -93,3 +93,11 @@ debug trajectory. It does not train, download data, or measure image quality.
 The derivation is in [docs/ddpm_reverse_process.md](docs/ddpm_reverse_process.md)
 and the validated result is in
 [Reports/milestone_05.md](Reports/milestone_05.md).
+
+## Full CIFAR-10 training
+
+Milestone 6 uses the existing primary U-Net and validated DDPM components. Its
+frozen configuration, preflight gates, 50k-step ceiling, and allowed conclusions
+are in [docs/plans/full_cifar10_training.md](docs/plans/full_cifar10_training.md).
+Heavy execution is Slurm-only; [cluster/README.md](cluster/README.md) contains
+the guarded Hellbender commands. No full-data training result exists yet.

@@ -27,3 +27,10 @@
   noise-like random-model trajectory cannot evaluate learned generation.
 - EMA stays outside sampler logic: a copied EMA model uses the ordinary model
   interface, preventing raw/EMA sampling code paths from diverging.
+- Milestone 6 deliberately freezes orchestration rather than redesigning
+  validated components. Deterministic global-step batches make resume position
+  explicit, while fixed initial tensors separate checkpoint progression from
+  sampling-seed variation.
+- A decreasing epsilon loss is necessary evidence of optimization but remains
+  insufficient for generation. The 10k/25k/50k EMA progression is the first
+  end-to-end qualitative gate, and FID/DDIM remain deferred.

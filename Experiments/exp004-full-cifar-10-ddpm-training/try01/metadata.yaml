@@ -1,0 +1,41 @@
+date: 2026-08-07
+project: diffusion-models-from-scratch
+experiment: exp004-full-cifar-10-ddpm-training
+try_number: try01
+goal: Stable full CIFAR-10 DDPM training and recognizable EMA samples
+status: READY
+parent_baseline: Milestone 5
+baseline_git_commit: 706103861c7d12ff3cb7dee037b6a10514b46b5e
+remote_ci_run: 31154154963
+run_git_commit: TBD
+configuration_path: configs/full_cifar10_training.json
+configuration_hash: 8d4480ef52c2d299320cc374ae893b07a16690e091c88f303d1b9c8bf0140487
+dataset: Official CIFAR-10 Python training split, 50,000 images
+dataset_identity: TBD
+random_seeds:
+  model: 101
+  data_order: 103
+  training_noise: 107
+  fixed_reverse_noise: 109
+  fixed_initial_noise: 1000-1015
+evaluation_rule: Frozen Gate A/B/C rules in docs/plans/full_cifar10_training.md
+environment: Hellbender Slurm, CUDA float32; exact versions TBD
+hardware: One Slurm-assigned GPU with at least 32 GB; exact model TBD
+job_ids: []
+persistent_output: /home/xggh8/data/diffusion-models-from-scratch/exp004-full-cifar10-ddpm-training/try01
+expected_records:
+  gate_a_metrics: 20
+  gate_b_metrics: 500
+  full_metrics: 50000
+observed_records: null
+exit_state: Not run
+source_hashes:
+  orchestration: 54e6cc9f88c7602ab6f7622d16df6a1d7f235c4d5de4d03003286ccbb1a3f3fd
+  trainer: 8aa1aa79db88d25aaf9317f59ccbad262c934a57f14c4e255b55e9fe11f3e81f
+  slurm_train: 53786c6df4ab76ec88fb6711d8ff7bf48c753c23c99d7b7dceb61156316e1033
+local_validation:
+  tests: 61
+  lint: passed
+  formatting: passed
+  shell_syntax: passed
+next_step: Publish exact run commit, sync Hellbender, and submit checks then Gate A

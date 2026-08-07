@@ -29,8 +29,16 @@ seeded complete loop, and EMA-model interface pass 13 focused tests. One
 random-weight CPU smoke run completed exactly 1,000 calls in 12.6002 seconds
 with a finite four-image result and six visually inspected trajectory states.
 
-The valid new conclusion is limited to structural DDPM sampling correctness.
+The valid Milestone 5 conclusion is limited to structural DDPM sampling
+correctness.
 The noise-like figure is expected from random weights and provides no evidence
 about generation quality. No training, trained-checkpoint evaluation, FID,
-DDIM, GPU, or dataset work was performed. Milestone 5 is uncommitted pending
-review.
+DDIM, GPU, or dataset work was performed. It was published as commit `7061038`,
+and GitHub Actions run `31154154963` passed 54 tests plus lint and formatting.
+
+Milestone 6 and `EXP004/try01` are now `READY` locally. The authoritative plan
+freezes the existing primary U-Net, linear 1,000-step schedule, AdamW at
+`2e-4`, batch 128, EMA `0.9999`, 20-step Gate A, two-job 250+250 Gate B, and an
+initial 50k maximum. Seven new orchestration tests bring the local suite to 61
+passes. No Slurm job or full-data optimization has run; the next action is to
+publish the exact run commit and submit infrastructure checks before Gate A.

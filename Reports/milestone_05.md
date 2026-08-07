@@ -11,7 +11,10 @@ U-Net and model-independent EMA interface.
 - Baseline commit: `2f13b3f785b6adfd815199b5a6274dd6b5245cee`
 - Milestone 4 GitHub Actions: run `31152749677`, SUCCESS, 46 seconds
 - Remote checks: 41 tests, Ruff lint, and Ruff formatting passed
-- Milestone 5 execution state: local and uncommitted
+- Published Milestone 5 commit:
+  `706103861c7d12ff3cb7dee037b6a10514b46b5e`
+- Milestone 5 GitHub Actions: run `31154154963`, SUCCESS; 54 tests, Ruff lint,
+  and Ruff formatting passed
 
 ## Implemented behavior
 
