@@ -7,15 +7,16 @@
 
 set -euo pipefail
 
-export TMPDIR="$SLURM_TMPDIR/tmp"
-export XDG_CACHE_HOME="$SLURM_TMPDIR/.cache"
-export TORCH_HOME="$SLURM_TMPDIR/torch_cache"
-export MPLCONFIGDIR="$SLURM_TMPDIR/matplotlib"
-export WANDB_DIR="$SLURM_TMPDIR/wandb"
-export HF_HOME="$SLURM_TMPDIR/hf"
-export TRANSFORMERS_CACHE="$SLURM_TMPDIR/hf/transformers"
-export HF_DATASETS_CACHE="$SLURM_TMPDIR/hf/datasets"
-export PIP_CACHE_DIR="$SLURM_TMPDIR/pip-cache"
+job_scratch=${SLURM_TMPDIR:-/tmp/${USER}/ddpm-${SLURM_JOB_ID}}
+export TMPDIR="$job_scratch/tmp"
+export XDG_CACHE_HOME="$job_scratch/.cache"
+export TORCH_HOME="$job_scratch/torch_cache"
+export MPLCONFIGDIR="$job_scratch/matplotlib"
+export WANDB_DIR="$job_scratch/wandb"
+export HF_HOME="$job_scratch/hf"
+export TRANSFORMERS_CACHE="$job_scratch/hf/transformers"
+export HF_DATASETS_CACHE="$job_scratch/hf/datasets"
+export PIP_CACHE_DIR="$job_scratch/pip-cache"
 
 mkdir -p \
   "$TMPDIR" \

@@ -8,6 +8,8 @@ parent_baseline: Milestone 5
 baseline_git_commit: 706103861c7d12ff3cb7dee037b6a10514b46b5e
 remote_ci_run: 31154154963
 run_git_commit: TBD
+preflight_commits:
+  - 7a11b6e79d5828f68a0c7055069e95c56741052b
 configuration_path: configs/full_cifar10_training.json
 configuration_hash: 8d4480ef52c2d299320cc374ae893b07a16690e091c88f303d1b9c8bf0140487
 dataset: Official CIFAR-10 Python training split, 50,000 images
@@ -21,21 +23,25 @@ random_seeds:
 evaluation_rule: Frozen Gate A/B/C rules in docs/plans/full_cifar10_training.md
 environment: Hellbender Slurm, CUDA float32; exact versions TBD
 hardware: One Slurm-assigned GPU with at least 32 GB; exact model TBD
-job_ids: []
+job_ids:
+  - id: 15914281
+    purpose: environment setup
+    state: FAILED
+    exit_code: "1:0"
 persistent_output: /home/xggh8/data/diffusion-models-from-scratch/exp004-full-cifar10-ddpm-training/try01
 expected_records:
   gate_a_metrics: 20
   gate_b_metrics: 500
   full_metrics: 50000
 observed_records: null
-exit_state: Not run
+exit_state: Infrastructure setup failed before environment creation; training not run
 source_hashes:
   orchestration: 54e6cc9f88c7602ab6f7622d16df6a1d7f235c4d5de4d03003286ccbb1a3f3fd
   trainer: 8aa1aa79db88d25aaf9317f59ccbad262c934a57f14c4e255b55e9fe11f3e81f
-  slurm_train: 53786c6df4ab76ec88fb6711d8ff7bf48c753c23c99d7b7dceb61156316e1033
+  slurm_train: 287739fe0faf6ae186e70f2ad05fe2f2cace52694579fe627d282d7835790101
 local_validation:
   tests: 61
   lint: passed
   formatting: passed
   shell_syntax: passed
-next_step: Publish exact run commit, sync Hellbender, and submit checks then Gate A
+next_step: Publish the SLURM_TMPDIR fallback fix, sync the new exact commit, and resubmit environment setup

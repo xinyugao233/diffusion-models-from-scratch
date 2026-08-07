@@ -30,7 +30,12 @@ loaded and no training was run by the test suite.
 
 ## Execution
 
-No Slurm job IDs exist yet. The runtime entrypoint refuses non-Slurm execution.
+The exact clean implementation commit
+`7a11b6e79d5828f68a0c7055069e95c56741052b` passed remote CI and was synced to
+a detached Hellbender checkout. Environment setup job `15914281` failed in one
+second, before environment creation or dependency installation, because this
+cluster does not export `SLURM_TMPDIR`. No GPU was requested and training did
+not begin.
 
 ## Results
 
@@ -48,7 +53,11 @@ None yet.
 
 ## Failure analysis
 
-Not applicable before execution.
+Job `15914281` exited `1:0` at line 10 of `cluster/sbatch_setup_env.sh` under
+`set -u`: `SLURM_TMPDIR: unbound variable`. The same assumption existed in all
+three Slurm entrypoints. The repair uses `$SLURM_TMPDIR` when available and a
+job-specific `/tmp/$USER/ddpm-$SLURM_JOB_ID` directory otherwise. It does not
+change scientific configuration or training code.
 
 ## Interpretation
 
@@ -61,8 +70,8 @@ dataset is included.
 
 ## Next step
 
-Publish the exact source commit and run remote CI, then pull that commit to
-Hellbender and submit the environment/check job before Gate A.
+Validate and publish the Slurm portability repair, sync the new exact commit,
+then resubmit environment setup and dataset-free checks before Gate A.
 
 ## Exact evidence paths
 
@@ -70,3 +79,5 @@ Hellbender and submit the environment/check job before Gate A.
 - Config: `configs/full_cifar10_training.json`
 - Persistent remote output:
   `/home/xggh8/data/diffusion-models-from-scratch/exp004-full-cifar10-ddpm-training/try01/`
+- Failed setup log:
+  `/home/xggh8/data/diffusion-models-from-scratch/slurm-logs/setup-15914281.out`

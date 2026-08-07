@@ -3,8 +3,8 @@
 ## Current status
 
 `READY` — authoritative plan, frozen configuration, production trainer, Slurm
-entrypoints, and local orchestration tests are complete. No training or Slurm
-job has been executed yet.
+entrypoints, and local orchestration tests are complete. Initial environment
+setup exposed a Slurm portability bug; no training has run.
 
 ## Objective
 
@@ -68,7 +68,7 @@ append-only log recovery, structured checkpoint wiring, and Slurm refusal.
 - Training entrypoint SHA-256:
   `8aa1aa79db88d25aaf9317f59ccbad262c934a57f14c4e255b55e9fe11f3e81f`
 - Slurm training script SHA-256:
-  `53786c6df4ab76ec88fb6711d8ff7bf48c753c23c99d7b7dceb61156316e1033`
+  `287739fe0faf6ae186e70f2ad05fe2f2cace52694579fe627d282d7835790101`
 
 These source hashes will be recomputed after final formatting and before the
 run commit is published. Job manifests, not this pre-execution draft, are the
@@ -76,7 +76,7 @@ authority for executed code identity.
 
 ## Planned gates
 
-- Infrastructure: NOT RUN
+- Infrastructure: FAILED once before environment creation (`15914281`); repair pending
 - Gate A, 20 steps: NOT RUN
 - Gate B, 250+250 resume and EMA sample: NOT RUN
 - Gate C, maximum 50k: NOT RUN

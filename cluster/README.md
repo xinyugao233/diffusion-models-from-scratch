@@ -29,5 +29,7 @@ sbatch --export=ALL,RUN_COMMIT="$run_commit" \
 ```
 
 The 50k command is submitted only after Gate A and Gate B artifacts validate.
-All caches and active work remain in `$SLURM_TMPDIR`; only required logs,
-checkpoints, metrics, manifests, and figures are staged to `~/data`.
+All caches and active work remain in `$SLURM_TMPDIR` when the cluster provides
+it; otherwise the scripts use a job-specific directory under `/tmp`. Only
+required logs, checkpoints, metrics, manifests, and figures are staged to
+`~/data`.
