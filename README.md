@@ -61,8 +61,8 @@ its limited scientific interpretation are documented in
 - `figures/`: generated visual checks
 
 Milestone 3 verifies only that the epsilon-prediction pipeline can learn a
-fixed 16-image dataset. Reverse sampling and generation quality are not yet
-implemented or evaluated.
+fixed 16-image dataset. Milestone 5 now implements reverse sampling, but no
+trained-checkpoint generation quality has been evaluated.
 
 ## Validate exact checkpoint resume
 
@@ -78,3 +78,18 @@ must copy the frozen settings into a new numbered try with new output paths.
 EMA, checkpoint schema, the preserved comparator failure, exact corrected
 result, and limitations are documented in
 [Reports/milestone_04.md](Reports/milestone_04.md).
+
+## Reproduce the DDPM sampling smoke test
+
+```bash
+.venv/bin/python scripts/run_sampling_smoke.py \
+  --config configs/sampling_smoke.json
+```
+
+The existing `EXP003/try01` outputs are immutable, so reproduction requires a
+new numbered try and output paths. The command performs 1,000 CPU inference
+steps through a randomly initialized EMA smoke U-Net and creates a six-state
+debug trajectory. It does not train, download data, or measure image quality.
+The derivation is in [docs/ddpm_reverse_process.md](docs/ddpm_reverse_process.md)
+and the validated result is in
+[Reports/milestone_05.md](Reports/milestone_05.md).

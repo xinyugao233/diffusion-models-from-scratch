@@ -30,3 +30,14 @@
 - 2026-08-07: Completed `EXP002/try02`; uninterrupted 100-step and reconstructed
   50+50 CPU training matched exactly in model, EMA, optimizer, all losses,
   global step, and next RNG draw/loss. The no-RNG-restore control differed.
+
+## 2026-08-07
+- Created experiment scaffold `exp003-ddpm-reverse-sampling` for `DDPM reverse sampling`.
+- Added initial index entry for `EXP003`.
+
+- 2026-08-07: Published Milestone 4 as commit `2f13b3f`; push-triggered GitHub
+  Actions run `31152749677` passed 41 tests plus Ruff lint and formatting.
+- 2026-08-07: Completed `EXP003/try01`; independent posterior arithmetic and
+  13 focused sampling tests passed, and the random EMA smoke U-Net completed a
+  finite seeded 1,000-call DDPM chain with six visually inspected states. No
+  training or image-quality evaluation was performed.

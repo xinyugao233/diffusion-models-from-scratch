@@ -21,3 +21,9 @@
   examining keys and values.
 - RNG restoration is empirically necessary: reconstruction without restoring
   the saved torch stream changed the immediate next timestep/noise draw.
+- `EXP003/try01` separates sampler correctness from model quality. Independent
+  posterior arithmetic, timestep-zero noise suppression, seed controls, and a
+  complete 1,000-call run support the reverse implementation, while the
+  noise-like random-model trajectory cannot evaluate learned generation.
+- EMA stays outside sampler logic: a copied EMA model uses the ordinary model
+  interface, preventing raw/EMA sampling code paths from diverging.

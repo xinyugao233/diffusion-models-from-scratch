@@ -1,0 +1,151 @@
+{
+  "artifacts": {
+    "figure": "Experiments/exp003-ddpm-reverse-sampling/try01/figures/random_model_ddpm_trajectory.png",
+    "figure_sha256": "f3dfb2da67a9acbcb5ec7731355162c1511b3d5361a1df6700a21c003539485c",
+    "final_sample": "Experiments/exp003-ddpm-reverse-sampling/try01/results/final_sample.pt",
+    "final_sample_file_sha256": "a87eff3ad1497095641dab018ba3188a94483d7b0023530a8eca1e6f1aa93360"
+  },
+  "configuration_path": "configs/sampling_smoke.json",
+  "configuration_sha256": "5899bea12bef0a88e3e865ac4de86178f83fa4181eedbd5b815440ac83ee9de5",
+  "environment": {
+    "device": "cpu",
+    "machine": "arm64",
+    "platform": "macOS-26.5.1-arm64-arm-64bit-Mach-O",
+    "python": "3.13.2",
+    "pytorch": "2.13.0",
+    "torch_num_threads": 1
+  },
+  "experiment": "EXP003/try01",
+  "final_sample": {
+    "finite": true,
+    "maximum": 0.9998340606689453,
+    "mean": 0.05114332213997841,
+    "minimum": -0.9998340606689453,
+    "sha256": "5f08b738ec84a7bcd727a2fa0dae1763f7c2573635f900bb27bac785dd6fc8f0",
+    "shape": [
+      4,
+      3,
+      32,
+      32
+    ],
+    "standard_deviation": 0.7834960222244263
+  },
+  "git": {
+    "commit": "2f13b3f785b6adfd815199b5a6274dd6b5245cee",
+    "working_tree_dirty": true
+  },
+  "interpretation": "Structural random-model sampling smoke only; no image-quality claim.",
+  "model": {
+    "model_seed": 71,
+    "name": "smoke_unet",
+    "parameter_count": 491107,
+    "weight_source": "ema_initialized_from_random_model"
+  },
+  "passed": true,
+  "sampling": {
+    "capture_timesteps": [
+      1000,
+      750,
+      500,
+      250,
+      100,
+      0
+    ],
+    "clip_x_start": true,
+    "duration_seconds": 12.600242959102616,
+    "expected_model_calls": 1000,
+    "model_calls": 1000,
+    "seed": 73
+  },
+  "schema_version": 1,
+  "source_sha256": {
+    "sampling": "13afbe9e5a259c843aa57eaeed6ac7a5ac96a011b26dfd479138f1a8183741e5",
+    "script": "af759d615cb310ab35cda41ac6a3671f4879df46cf6fbca290daa339df00a70b"
+  },
+  "trajectory": {
+    "0": {
+      "finite": true,
+      "maximum": 0.9998340606689453,
+      "mean": 0.05114332213997841,
+      "minimum": -0.9998340606689453,
+      "sha256": "5f08b738ec84a7bcd727a2fa0dae1763f7c2573635f900bb27bac785dd6fc8f0",
+      "shape": [
+        4,
+        3,
+        32,
+        32
+      ],
+      "standard_deviation": 0.7834960222244263
+    },
+    "100": {
+      "finite": true,
+      "maximum": 2.0556039810180664,
+      "mean": 0.034813255071640015,
+      "minimum": -2.10616397857666,
+      "sha256": "8865d7895468eb73532fd199ced54925d33fcdf07884444945e2d81aad697c37",
+      "shape": [
+        4,
+        3,
+        32,
+        32
+      ],
+      "standard_deviation": 0.950593113899231
+    },
+    "1000": {
+      "finite": true,
+      "maximum": 3.866471529006958,
+      "mean": 0.0032987669110298157,
+      "minimum": -4.402928829193115,
+      "sha256": "8e5e4fbe1823a7fd22682f213ff0a5a52b90ff615f9ade9f76ec7ddb510377d8",
+      "shape": [
+        4,
+        3,
+        32,
+        32
+      ],
+      "standard_deviation": 1.0031006336212158
+    },
+    "250": {
+      "finite": true,
+      "maximum": 3.6824679374694824,
+      "mean": 0.018801914528012276,
+      "minimum": -3.3687469959259033,
+      "sha256": "d3e141f8a8553de38fa813f82b7f231870e913732a7b0e3052098269addea8bb",
+      "shape": [
+        4,
+        3,
+        32,
+        32
+      ],
+      "standard_deviation": 1.123748540878296
+    },
+    "500": {
+      "finite": true,
+      "maximum": 3.9786322116851807,
+      "mean": 0.0030368072912096977,
+      "minimum": -3.9185633659362793,
+      "sha256": "1affaddb0ca1aa3174ac707fcbae07d8efafd0b0de05eadf61c0539a06c5de99",
+      "shape": [
+        4,
+        3,
+        32,
+        32
+      ],
+      "standard_deviation": 1.1090147495269775
+    },
+    "750": {
+      "finite": true,
+      "maximum": 3.7646424770355225,
+      "mean": -0.004559031222015619,
+      "minimum": -4.410502910614014,
+      "sha256": "94ac56a1e5adb50a5d8c571261d81be4da411f63453ce8cd458d0c1dba8f74fa",
+      "shape": [
+        4,
+        3,
+        32,
+        32
+      ],
+      "standard_deviation": 1.0207496881484985
+    }
+  }
+}

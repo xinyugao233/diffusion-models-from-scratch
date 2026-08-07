@@ -94,13 +94,15 @@ The following are explicitly outside the MVP: EDM, flow matching, class
 conditioning, distributed training, large-scale FID sweeps, additional
 datasets, deployment, and web interfaces.
 
-## Current milestone: EMA and exact checkpoint resume
+## Current milestone: DDPM reverse sampling
 
-Milestone 4 is complete locally under `docs/plans/ema_and_checkpoints.md` and
-`EXP002/try02`. The project now has explicit EMA, structured training-state
-checkpoints, RNG restoration, and an exact deterministic CPU 100-step versus
-50+50 resume validation. The result is limited to the frozen local stack and
-stops before reverse sampling, full-dataset training, or GPU computation.
+Milestone 4 is published at commit `2f13b3f` with green remote CI. Milestone 5
+is complete locally under `docs/plans/ddpm_reverse_sampling.md` and
+`EXP003/try01`: exact posterior arithmetic, epsilon-to-clean reconstruction,
+final-step noise suppression, seeded ancestral sampling, and one finite
+1,000-call random-model trajectory are validated. This establishes structural
+sampling correctness only; no trained-checkpoint or image-quality evaluation
+has been performed.
 
 ## Initial acceptance criteria
 

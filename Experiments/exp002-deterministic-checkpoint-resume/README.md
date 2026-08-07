@@ -39,8 +39,8 @@ control proves RNG restoration is necessary.
 
 ## Immediate next action
 
-Stop at Milestone 4 and await review or explicit authorization for DDPM
-sampling.
+Milestone 4 is published and remotely validated. Its outputs remain immutable;
+DDPM sampling proceeds separately under `EXP003`.
 
 ## Evidence
 

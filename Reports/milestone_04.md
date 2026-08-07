@@ -12,7 +12,10 @@ without changing any later update or random draw.
 - Branch and remote: `main`, synchronized with `origin/main` before Milestone 4
 - Milestone 3 GitHub Actions: run `31151451025`, SUCCESS, 49 seconds
 - Local baseline: clean before `EXP002` creation
-- Executed Milestone 4 code: uncommitted, with exact hashes recorded below
+- Published Milestone 4 commit:
+  `2f13b3f785b6adfd815199b5a6274dd6b5245cee`
+- Milestone 4 GitHub Actions: run `31152749677`, SUCCESS, 46 seconds; 41 tests,
+  Ruff lint, and Ruff formatting passed
 
 ## Implemented behavior
 

@@ -1,12 +1,12 @@
 # State
 
-- Status: Milestone 3 is remotely closed; Milestone 4 and `EXP002/try02` are
-  `COMPLETED` locally under `docs/plans/ema_and_checkpoints.md`.
-- Baseline commit: `45c17b8a743b56b0233794dfbc25b8709863473c`
-  (`feat: add DDPM epsilon-prediction training and overfit validation`).
+- Status: Milestone 4 is remotely closed; Milestone 5 and `EXP003/try01` are
+  `COMPLETED` locally under `docs/plans/ddpm_reverse_sampling.md`.
+- Baseline commit: `2f13b3f785b6adfd815199b5a6274dd6b5245cee`
+  (`feat: add EMA and reproducible checkpoint resume`).
 - Remote state: private GitHub repository `xinyugao233/diffusion-models-from-scratch`
-  has green push-triggered CPU checks for Milestone 3. Run `31151451025` passed
-  in 49 seconds on 2026-08-07 after commit `45c17b8` was pushed to `main`.
+  has green push-triggered CPU checks for Milestone 4. Run `31152749677` passed
+  in 46 seconds on 2026-08-07 with 41 tests plus Ruff lint and formatting.
 - Milestone 2 model state: the primary U-Net has 12,852,547 trainable
   parameters and the smoke U-Net has 491,107. The validated architecture and
   forward-diffusion equations are frozen for Milestone 3.
@@ -43,5 +43,20 @@
 - Scientific conclusion: exact resume is established on the frozen local CPU
   software stack only. Cross-device/version, GPU, distributed, full-data, and
   sampling behavior remain untested.
-- Immediate next action: stop at Milestone 4 and await review or explicit DDPM
-  sampling authorization. Milestone 4 remains uncommitted.
+- Milestone 5 implementation: exact DDPM posterior, epsilon-to-clean
+  reconstruction, fixed posterior variance, deterministic final step, supplied
+  reverse noise, seeded complete loop, per-step finite checks, and selected
+  trajectory capture.
+- `EXP003/try01`: `COMPLETED`; 13 focused sampling tests and one full random EMA
+  smoke chain passed. The CPU run made exactly 1,000 model calls in 12.6002
+  seconds and produced a finite `[4,3,32,32]` final tensor plus six requested
+  trajectory states.
+- Validation: 54 tests pass; Ruff lint/format and `git diff --check` pass; the
+  artifact hashes, schema, call count, shape, finiteness, and final-state
+  identity were independently audited; the 632×454 RGB trajectory was visually
+  inspected. U-Net, forward diffusion, and schedules remain unchanged.
+- Scientific conclusion: DDPM ancestral sampling is structurally correct for
+  the tested equations and CPU execution. Random-model visuals make no image-
+  quality, trained-checkpoint, FID, likelihood, or generalization claim.
+- Immediate next action: review and commit Milestone 5 before trained-checkpoint
+  evaluation or DDIM implementation. Milestone 5 remains uncommitted.

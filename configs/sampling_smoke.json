@@ -1,0 +1,25 @@
+{
+  "baseline_git_commit": "2f13b3f785b6adfd815199b5a6274dd6b5245cee",
+  "batch_size": 4,
+  "capture_timesteps": [1000, 750, 500, 250, 100, 0],
+  "clip_x_start": true,
+  "device": "cpu",
+  "dtype": "float32",
+  "model": "smoke_unet",
+  "num_threads": 1,
+  "output": {
+    "figure": "Experiments/exp003-ddpm-reverse-sampling/try01/figures/random_model_ddpm_trajectory.png",
+    "final_sample": "Experiments/exp003-ddpm-reverse-sampling/try01/results/final_sample.pt",
+    "summary": "Experiments/exp003-ddpm-reverse-sampling/try01/results/sampling_summary.json"
+  },
+  "schedule": {
+    "beta_end": 0.02,
+    "beta_start": 0.0001,
+    "num_steps": 1000
+  },
+  "seeds": {
+    "model": 71,
+    "sampling": 73
+  },
+  "weights": "ema_initialized_from_random_model"
+}

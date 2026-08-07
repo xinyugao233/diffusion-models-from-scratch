@@ -20,8 +20,15 @@ from diffusion_models.data import (
 )
 from diffusion_models.diffusion import (
     DDPMSchedule,
+    PosteriorOutput,
+    ReversePrediction,
+    SamplingResult,
     make_linear_ddpm_schedule,
+    p_mean_variance,
+    p_sample,
+    p_sample_loop,
     predict_x_start_from_noise,
+    q_posterior_mean_variance,
     q_sample,
 )
 from diffusion_models.ema import ExponentialMovingAverage
@@ -54,6 +61,9 @@ __all__ = [
     "JsonlScalarLogger",
     "LoadedCheckpoint",
     "OptimizationMetrics",
+    "PosteriorOutput",
+    "ReversePrediction",
+    "SamplingResult",
     "UNetConfig",
     "capture_rng_state",
     "epsilon_prediction_loss",
@@ -66,8 +76,12 @@ __all__ = [
     "make_linear_ddpm_schedule",
     "normalize",
     "optimizer_step",
+    "p_mean_variance",
+    "p_sample",
+    "p_sample_loop",
     "predict_x_start_from_noise",
     "primary_unet_config",
+    "q_posterior_mean_variance",
     "q_sample",
     "restore_rng_state",
     "sample_epsilon_training_batch",

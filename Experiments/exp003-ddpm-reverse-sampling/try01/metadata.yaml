@@ -1,0 +1,45 @@
+date: 2026-08-07
+project: diffusion-models-from-scratch
+experiment: exp003-ddpm-reverse-sampling
+try_number: try01
+goal: Validate DDPM posterior math and a complete ancestral reverse chain
+status: COMPLETED
+parent_baseline: Milestone 4
+git_commit: 2f13b3f785b6adfd815199b5a6274dd6b5245cee
+remote_ci_run: 31152749677
+configuration_path: configs/sampling_smoke.json
+configuration_hash: 5899bea12bef0a88e3e865ac4de86178f83fa4181eedbd5b815440ac83ee9de5
+dataset: None; randomly initialized smoke U-Net and Gaussian input
+random_seeds:
+  model: 71
+  sampling: 73
+evaluation_rule: Frozen Gate A, B, and C checks in docs/plans/ddpm_reverse_sampling.md
+scientific_invariants:
+  schedule: linear T=1000, beta 1e-4 to 2e-2
+  model_space: '[-1,1] with predicted x_start clipping enabled'
+  variance: fixed DDPM posterior variance
+  final_step_noise: none
+environment: Python 3.13.2, PyTorch 2.13.0, one CPU thread
+hardware: Apple arm64 CPU on macOS
+job_id: null
+output_path: Experiments/exp003-ddpm-reverse-sampling/try01/results/sampling_summary.json
+expected_record_count: 1
+observed_record_count: 1
+figures:
+  - Experiments/exp003-ddpm-reverse-sampling/try01/figures/random_model_ddpm_trajectory.png
+result_sha256: 0de6e664a015a7786258548575d81445f65a21f62249a3c18b158995cdee2c26
+final_sample_file_sha256: a87eff3ad1497095641dab018ba3188a94483d7b0023530a8eca1e6f1aa93360
+figure_sha256: f3dfb2da67a9acbcb5ec7731355162c1511b3d5361a1df6700a21c003539485c
+source_hashes:
+  sampling: 13afbe9e5a259c843aa57eaeed6ac7a5ac96a011b26dfd479138f1a8183741e5
+  smoke_script: af759d615cb310ab35cda41ac6a3671f4879df46cf6fbca290daa339df00a70b
+results_summary:
+  passed: true
+  model_calls: 1000
+  expected_model_calls: 1000
+  duration_seconds: 12.600242959102616
+  final_shape: [4, 3, 32, 32]
+  final_finite: true
+  captured_states: 6
+exit_state: Completed normally; all frozen acceptance checks passed
+next_step: Review and commit Milestone 5 before trained-checkpoint sampling

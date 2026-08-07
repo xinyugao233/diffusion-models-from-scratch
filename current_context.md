@@ -14,7 +14,8 @@ completed normally. The fixed subset, hashes, raw logs, loss CSV, visually
 inspected curve, and exact environment are durable under the try folder and
 summarized in `Reports/milestone_03.md`.
 
-Milestone 4 is now complete locally as `EXP002/try02`. Explicit EMA and a
+Milestone 4 is published at commit `2f13b3f` and GitHub Actions run
+`31152749677` passed 41 tests plus lint and formatting. Explicit EMA and a
 versioned structured checkpoint preserve model, EMA, AdamW, global step,
 configuration, and Python/torch RNG. The corrected deterministic validation
 found exact equality between 100 uninterrupted steps and reconstructed 50+50
@@ -22,7 +23,14 @@ training for every state tensor, the full loss trajectory, and the next random
 draw/loss. The RNG-omission control differed as required. Try01's mapping-
 container comparator failure is preserved rather than overwritten.
 
-The valid conclusion is limited to exact resume on this deterministic local CPU
-software stack. No reverse sampler or generation evaluation exists. Milestone
-4 is uncommitted and the project stops here pending review or an explicit DDPM
-sampling request.
+Milestone 5 and `EXP003/try01` are complete locally. The exact posterior,
+epsilon-to-clean conversion, deterministic final step, supplied reverse noise,
+seeded complete loop, and EMA-model interface pass 13 focused tests. One
+random-weight CPU smoke run completed exactly 1,000 calls in 12.6002 seconds
+with a finite four-image result and six visually inspected trajectory states.
+
+The valid new conclusion is limited to structural DDPM sampling correctness.
+The noise-like figure is expected from random weights and provides no evidence
+about generation quality. No training, trained-checkpoint evaluation, FID,
+DDIM, GPU, or dataset work was performed. Milestone 5 is uncommitted pending
+review.
