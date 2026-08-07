@@ -94,13 +94,13 @@ The following are explicitly outside the MVP: EDM, flow matching, class
 conditioning, distributed training, large-scale FID sweeps, additional
 datasets, deployment, and web interfaces.
 
-## Current milestone: epsilon-prediction learnability
+## Current milestone: EMA and exact checkpoint resume
 
-Milestone 3 is complete under `docs/plans/training_and_overfit.md` and
-`EXP001/try01`. The unchanged smoke U-Net passed a deterministic synthetic
-optimization gate and a frozen 16-image CIFAR-10 overfit gate on local CPU.
-This establishes small-dataset epsilon-prediction learnability only. It stops
-before full-dataset training, sampling, EMA, checkpointing, or GPU computation.
+Milestone 4 is complete locally under `docs/plans/ema_and_checkpoints.md` and
+`EXP002/try02`. The project now has explicit EMA, structured training-state
+checkpoints, RNG restoration, and an exact deterministic CPU 100-step versus
+50+50 resume validation. The result is limited to the frozen local stack and
+stops before reverse sampling, full-dataset training, or GPU computation.
 
 ## Initial acceptance criteria
 

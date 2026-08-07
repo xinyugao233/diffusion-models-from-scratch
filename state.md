@@ -1,12 +1,12 @@
 # State
 
-- Status: Milestone 3 and `EXP001/try01` are `COMPLETED`; both frozen local CPU
-  learnability gates passed.
-- Baseline commit: `26e735e597001251d92075d5bf02fb5649851800`
-  (`feat: add tested time-conditioned CIFAR-10 U-Net`).
-- Remote state: private GitHub repository exists at
-  `xinyugao233/diffusion-models-from-scratch`; Milestone 2 GitHub Actions passed
-  on 2026-08-06 with 22 tests plus Ruff lint and format checks.
+- Status: Milestone 3 is remotely closed; Milestone 4 and `EXP002/try02` are
+  `COMPLETED` locally under `docs/plans/ema_and_checkpoints.md`.
+- Baseline commit: `45c17b8a743b56b0233794dfbc25b8709863473c`
+  (`feat: add DDPM epsilon-prediction training and overfit validation`).
+- Remote state: private GitHub repository `xinyugao233/diffusion-models-from-scratch`
+  has green push-triggered CPU checks for Milestone 3. Run `31151451025` passed
+  in 49 seconds on 2026-08-07 after commit `45c17b8` was pushed to `main`.
 - Milestone 2 model state: the primary U-Net has 12,852,547 trainable
   parameters and the smoke U-Net has 491,107. The validated architecture and
   forward-diffusion equations are frozen for Milestone 3.
@@ -27,5 +27,21 @@
   correctness, and full-dataset training remain untested.
 - Maintenance debt: GitHub Actions emitted a non-blocking Node.js runtime
   deprecation warning. Updating action versions is deliberately deferred.
-- Immediate next action: stop at Milestone 3 and await review or explicit
-  authorization. No commit was created automatically.
+- Milestone 4 implementation: explicit detached EMA, exact-copy buffer policy,
+  versioned structured checkpoints, strict restoration/errors, global-step,
+  Python/torch/named-generator RNG support, and future EMA evaluation state.
+- `EXP002/try01`: preserved `FAILED` because its comparator rejected equivalent
+  `OrderedDict` and `dict` containers before tensor comparison; all other
+  comparisons were exact.
+- `EXP002/try02`: `COMPLETED`; all 12 exact comparisons passed for uninterrupted
+  100-step versus reconstructed 50+50 training. The no-RNG-restore control
+  changed the next draw. Checkpoint SHA-256 is
+  `3d4ff5184457c4002b2f7a8bb192360e9391989bbe9f523c3c8cc30f474012c0`.
+- Validation: 41 tests pass; Ruff lint/format and `git diff --check` pass;
+  checkpoint schema/hash/config and scientific try invariants were independently
+  audited. U-Net and forward-diffusion files remain unchanged.
+- Scientific conclusion: exact resume is established on the frozen local CPU
+  software stack only. Cross-device/version, GPU, distributed, full-data, and
+  sampling behavior remain untested.
+- Immediate next action: stop at Milestone 4 and await review or explicit DDPM
+  sampling authorization. Milestone 4 remains uncommitted.

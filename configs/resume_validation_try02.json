@@ -1,0 +1,34 @@
+{
+  "baseline_git_commit": "45c17b8a743b56b0233794dfbc25b8709863473c",
+  "batch_size": 4,
+  "device": "cpu",
+  "dtype": "float32",
+  "ema_decay": 0.99,
+  "gradient_clip": 1.0,
+  "interruption_step": 50,
+  "model": "smoke_unet",
+  "num_threads": 1,
+  "optimizer": {
+    "betas": [0.9, 0.999],
+    "eps": 1e-08,
+    "learning_rate": 0.001,
+    "name": "AdamW",
+    "weight_decay": 0.0
+  },
+  "output": {
+    "checkpoint": "Experiments/exp002-deterministic-checkpoint-resume/try02/checkpoints/resume_step_0050.pt",
+    "summary": "Experiments/exp002-deterministic-checkpoint-resume/try02/results/resume_summary.json"
+  },
+  "schedule": {
+    "beta_end": 0.02,
+    "beta_start": 0.0001,
+    "num_steps": 1000
+  },
+  "seeds": {
+    "model": 41,
+    "python": 53,
+    "synthetic_data": 43,
+    "torch_training": 47
+  },
+  "total_steps": 100
+}

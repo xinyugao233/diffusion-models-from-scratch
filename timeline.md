@@ -17,3 +17,16 @@
 - 2026-08-06: Completed `EXP001/try01`; 40-step synthetic and 500-step fixed-16
   CIFAR-10 CPU gates passed their frozen loss-reduction criteria with finite
   logs. Recorded the exact manifest, hashes, raw losses, and inspected curve.
+
+## 2026-08-07
+- Created experiment scaffold `exp002-deterministic-checkpoint-resume` for `Deterministic checkpoint resume`.
+- Added initial index entry for `EXP002`.
+
+- 2026-08-07: Preserved `EXP002/try01` as failed after a comparator rejected
+  equivalent `OrderedDict` and `dict` containers before comparing model tensors.
+  Froze a mapping-aware comparison correction as `try02` without changing the
+  scientific configuration or exact-equality rule.
+
+- 2026-08-07: Completed `EXP002/try02`; uninterrupted 100-step and reconstructed
+  50+50 CPU training matched exactly in model, EMA, optimizer, all losses,
+  global step, and next RNG draw/loss. The no-RNG-restore control differed.

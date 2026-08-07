@@ -1,0 +1,58 @@
+{
+  "checkpoint": {
+    "bytes": 7983729,
+    "global_step": 50,
+    "sha256": "49d3dc7a91a6f3681a03f4f9dbb5bd02986fac781033f46550169d5bbc29139d"
+  },
+  "command": ".venv/bin/python scripts/run_resume_validation.py --config configs/resume_validation.json",
+  "comparisons": {
+    "ema_state_exact": true,
+    "ema_update_count_exact": true,
+    "final_loss_exact": true,
+    "global_step_exact": true,
+    "loss_trajectory_exact": true,
+    "model_state_exact": false,
+    "next_loss_exact": true,
+    "next_noise_exact": true,
+    "next_python_draw_exact": true,
+    "next_timesteps_exact": true,
+    "optimizer_state_exact": true,
+    "rng_omission_changes_next_draw": true
+  },
+  "config_sha256": "d5752d3925f703d6abf6e0a55cea0ec60aea2f3beaf2853f99bf3536255acdd3",
+  "environment": {
+    "device": "cpu",
+    "machine": "arm64",
+    "platform": "macOS-26.5.1-arm64-arm-64bit-Mach-O",
+    "python": "3.13.2",
+    "pytorch": "2.13.0",
+    "torch_num_threads": 1
+  },
+  "final_loss": 0.16175299882888794,
+  "git": {
+    "commit": "45c17b8a743b56b0233794dfbc25b8709863473c",
+    "working_tree_dirty": true
+  },
+  "next_loss": 0.41868576407432556,
+  "next_noise_sha256": "79d7a08f86fbd37b56a9b713e4f2972f2567eeb6fa1c42df8d967dba765b3260",
+  "next_timesteps": [
+    12,
+    899,
+    157,
+    802
+  ],
+  "numpy_randomness_used": false,
+  "passed": false,
+  "path_a_duration_seconds": 4.0434795001056045,
+  "path_b_duration_seconds": 4.125504333060235,
+  "record_count": 1,
+  "source_hashes": {
+    "checkpointing": "973a5eb9166f554ba45030cce92fddda716426b289d1f2d189c5ec24034d5299",
+    "ema": "cd6f413894896c9384da8afd4cc7331c4882f9f2f995b70a812430f12a31b075",
+    "script": "1632539d965c57586ee2d069a29449da6ab618cde2c7c35cbfa296c66982c12a"
+  },
+  "steps": {
+    "interruption": 50,
+    "total": 100
+  }
+}

@@ -14,7 +14,15 @@ completed normally. The fixed subset, hashes, raw logs, loss CSV, visually
 inspected curve, and exact environment are durable under the try folder and
 summarized in `Reports/milestone_03.md`.
 
-The valid conclusion is limited to learnability of the complete fixed-small-data
-epsilon-prediction pipeline. No checkpoint or sampler exists, so generation
-quality and generalization remain untested. Stop here pending review or an
-explicit next-stage request; no commit has been created for Milestone 3.
+Milestone 4 is now complete locally as `EXP002/try02`. Explicit EMA and a
+versioned structured checkpoint preserve model, EMA, AdamW, global step,
+configuration, and Python/torch RNG. The corrected deterministic validation
+found exact equality between 100 uninterrupted steps and reconstructed 50+50
+training for every state tensor, the full loss trajectory, and the next random
+draw/loss. The RNG-omission control differed as required. Try01's mapping-
+container comparator failure is preserved rather than overwritten.
+
+The valid conclusion is limited to exact resume on this deterministic local CPU
+software stack. No reverse sampler or generation evaluation exists. Milestone
+4 is uncommitted and the project stops here pending review or an explicit DDPM
+sampling request.

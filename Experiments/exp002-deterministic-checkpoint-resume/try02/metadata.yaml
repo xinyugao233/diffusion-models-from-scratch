@@ -1,0 +1,43 @@
+date: 2026-08-07
+project: diffusion-models-from-scratch
+experiment: exp002-deterministic-checkpoint-resume
+try_number: try02
+goal: Repeat exact resume validation with mapping-subclass-aware state comparison
+status: COMPLETED
+parent_try: try01
+parent_failure: Comparator rejected OrderedDict versus dict before tensor comparison
+git_commit: 45c17b8a743b56b0233794dfbc25b8709863473c
+remote_ci_run: 31151451025
+configuration_path: configs/resume_validation_try02.json
+configuration_hash: 7131698a5a96c7eaeba9004df081d362fe484757ea85810f8d0e7871a24e60b3
+dataset: Fixed synthetic batch; identical to try01
+checkpoint: Experiments/exp002-deterministic-checkpoint-resume/try02/checkpoints/resume_step_0050.pt
+random_seeds:
+  model: 41
+  synthetic_data: 43
+  torch_training: 47
+  python: 53
+evaluation_rule: Exact equality for all valid path states, losses, and next draws
+scientific_configuration_changed: false
+implementation_change: Mapping subclasses compare by keys and recursively exact values
+environment: Python 3.13.2, PyTorch 2.13.0, one CPU thread
+hardware: Apple arm64 CPU on macOS 26.5.1
+job_id: null
+output_path: Experiments/exp002-deterministic-checkpoint-resume/try02/results/resume_summary.json
+expected_record_count: 1
+observed_record_count: 1
+checkpoint_sha256: 3d4ff5184457c4002b2f7a8bb192360e9391989bbe9f523c3c8cc30f474012c0
+result_sha256: 9cf70d48911aabc2a64f862978d472b17542aae688aae3d6f0210d5055c0b2dd
+source_hashes:
+  ema: cd6f413894896c9384da8afd4cc7331c4882f9f2f995b70a812430f12a31b075
+  checkpointing: a28b9cf0b6e533ed7987c6cd8916839a8cc6c226c4c6cdc35a9eea2cb5a38cca
+  validation_script: 5e3a5457c5b263b878be1e81cbe1e4d18a12fc74b48378649614f748050d150b
+results_summary:
+  passed: true
+  exact_comparisons_passed: 12
+  exact_comparisons_total: 12
+  final_loss: 0.16175299882888794
+  next_loss: 0.41868576407432556
+  rng_omission_changed_next_draw: true
+exit_state: Completed normally; all exact acceptance checks passed
+next_step: Stop at Milestone 4 pending review or sampling authorization

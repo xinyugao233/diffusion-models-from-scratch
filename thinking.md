@@ -15,3 +15,9 @@
   loss reduction is strong evidence for correct end-to-end optimization wiring,
   but it cannot distinguish memorization from generalizable denoising and says
   nothing about reverse sampling quality.
+- `EXP002/try02` establishes exact same-stack CPU resume for the frozen smoke
+  trajectory. The failed try01 is a useful bookkeeping lesson: exact tensor
+  comparison must not reject semantically equivalent mapping subclasses before
+  examining keys and values.
+- RNG restoration is empirically necessary: reconstruction without restoring
+  the saved torch stream changed the immediate next timestep/noise draw.

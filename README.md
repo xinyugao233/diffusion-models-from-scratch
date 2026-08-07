@@ -63,3 +63,18 @@ its limited scientific interpretation are documented in
 Milestone 3 verifies only that the epsilon-prediction pipeline can learn a
 fixed 16-image dataset. Reverse sampling and generation quality are not yet
 implemented or evaluated.
+
+## Validate exact checkpoint resume
+
+Milestone 4's corrected immutable result was produced with:
+
+```bash
+.venv/bin/python scripts/run_resume_validation.py \
+  --config configs/resume_validation_try02.json
+```
+
+The existing `try01` and `try02` outputs must not be overwritten; a reproduction
+must copy the frozen settings into a new numbered try with new output paths.
+EMA, checkpoint schema, the preserved comparator failure, exact corrected
+result, and limitations are documented in
+[Reports/milestone_04.md](Reports/milestone_04.md).
