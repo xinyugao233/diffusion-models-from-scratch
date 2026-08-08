@@ -26,9 +26,15 @@ sbatch --export=ALL,RUN_COMMIT="$run_commit" \
 sbatch --export=ALL,RUN_COMMIT="$run_commit" \
   --output="$log_root/gate-b-500-%j.out" \
   cluster/sbatch_train.sh gate_b 500 checkpoint_step_000250.pt
+
+sbatch --export=ALL,RUN_COMMIT="$run_commit" \
+  --output="$log_root/full-50000-%j.out" \
+  cluster/sbatch_train.sh full 50000
 ```
 
-The 50k command is submitted only after Gate A and Gate B artifacts validate.
+The training script requests the H100 type validated with the pinned CUDA 13
+wheel. The 50k command is submitted only after Gate A and Gate B artifacts
+validate. Do not rerun an existing completed stage; create a new numbered try.
 All caches and active work remain in `$SLURM_TMPDIR` when the cluster provides
 it; otherwise the scripts use a job-specific directory under `/tmp`. Only
 required logs, checkpoints, metrics, manifests, and figures are staged to

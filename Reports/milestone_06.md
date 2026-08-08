@@ -1,100 +1,86 @@
 # Milestone 06 Report: First Full CIFAR-10 DDPM Training
 
-## Current status
+## Outcome
 
-`READY` — authoritative plan, frozen configuration, production trainer, Slurm
-entrypoints, and local orchestration tests are complete. Initial environment
-setup exposed a Slurm portability bug; no training has run.
+`COMPLETE`. The unchanged 12,852,547-parameter DDPM trained for 50,000 steps
+on the full CIFAR-10 training split. All frozen infrastructure, resume,
+stability, loss, cadence, and qualitative sample gates passed.
 
-## Objective
+![Fixed-seed EMA progression](../Experiments/exp004-full-cifar-10-ddpm-training/try01/figures/full/fixed_seed_progression_010000_025000_050000.png)
 
-Train the unchanged validated DDPM system on all 50,000 CIFAR-10 training
-images and determine whether fixed-seed EMA samples become visibly structured
-or recognizable through a maximum initial budget of 50,000 steps.
+## Exact identity
 
-## Baseline and remote gate
-
-- Milestone 5 commit:
-  `706103861c7d12ff3cb7dee037b6a10514b46b5e`
-- Milestone 5 GitHub Actions run: `31154154963`, SUCCESS, 1 minute 9 seconds
-- Remote results: 54 tests, Ruff lint, and Ruff formatting passed
-- Worktree was clean before `EXP004` creation
-
-## Implemented orchestration
-
-- Deterministic global-step-to-CIFAR-batch mapping with exact resume position.
-- Explicit epsilon training step with checked gradients, clipping, AdamW, then
-  EMA in the frozen order.
-- Append-only JSONL metrics with contiguous-step resume validation.
-- Frozen checkpoint and sampling cadence helpers.
-- Fixed independently seeded initial sample tensors.
-- Full Slurm-only trainer with source/config/dataset guards.
-- Complete checkpoint restoration in a new process and CUDA RNG support.
-- Periodic EMA sampling through the validated ancestral sampler.
-- Per-segment summaries/manifests, hashes, throughput, runtime, and peak CUDA
-  memory.
-- Slurm setup, dataset-free checks, and GPU train scripts with `$SLURM_TMPDIR`
-  cache isolation and persistent artifact staging.
-
-No forward/reverse mathematics, U-Net architecture, EMA mathematics, or
-checkpoint schema was redesigned.
-
-## Local verification
-
-```text
-.venv/bin/python -m pytest -q
-  -> 61 passed
-.venv/bin/ruff check .
-  -> All checks passed
-.venv/bin/ruff format --check .
-  -> 70 files already formatted
-bash -n cluster/sbatch_setup_env.sh cluster/sbatch_checks.sh \
-        cluster/sbatch_train.sh
-  -> passed
-git diff --check
-  -> passed with no output
-```
-
-The seven new tests are CPU-only and dataset-free. They cover deterministic
-resume batches, one real optimizer/EMA step, update order, cadence, fixed seeds,
-append-only log recovery, structured checkpoint wiring, and Slurm refusal.
-
-## Frozen identities before execution
-
+- Run commit: `7ad4524fbbeb61fc78a024ee74e2638644012774`
+- GitHub Actions run: `31155794394`, successful
 - Configuration SHA-256:
   `8d4480ef52c2d299320cc374ae893b07a16690e091c88f303d1b9c8bf0140487`
-- Orchestration source SHA-256:
-  `54e6cc9f88c7602ab6f7622d16df6a1d7f235c4d5de4d03003286ccbb1a3f3fd`
-- Training entrypoint SHA-256:
-  `8aa1aa79db88d25aaf9317f59ccbad262c934a57f14c4e255b55e9fe11f3e81f`
-- Slurm training script SHA-256:
-  `287739fe0faf6ae186e70f2ad05fe2f2cace52694579fe627d282d7835790101`
+- CIFAR-10 archive MD5: `c58f30108f718f92721af3b95e74349a`
+- Final job: `15943245`, exit `0:0`, NVIDIA H100 NVL
+- Environment: Python 3.13.11, PyTorch 2.13.0+cu130, CUDA 13.0
 
-These source hashes will be recomputed after final formatting and before the
-run commit is published. Job manifests, not this pre-execution draft, are the
-authority for executed code identity.
+## Gate results
 
-## Planned gates
+| Gate | Requirement | Evidence | Status |
+|---|---|---|---|
+| Infrastructure | Slurm setup and dataset-free checks | Jobs `15914382` and `15914409`; 61 tests, lint, format | PASS |
+| Gate A | 20 finite updates, parameter/EMA change, checkpoint | Job `15914422`; 20 records, EMA count 20 | PASS |
+| Gate B | 250+250 new-process resume and exact repeated sample | Jobs `15914482`, `15938195`; 500 records, matching tensor hash | PASS |
+| Gate C records | 50,000 unique contiguous finite records | Raw JSONL SHA-256 `1fbd7e...4896f` | PASS |
+| Gate C loss | Last-1k mean below 90% of first-1k mean | `0.0305275 / 0.0655694 = 0.465576` | PASS |
+| Checkpoints | Every 5k through 50k | Ten immutable 205,996,222-byte checkpoints | PASS |
+| Sampling | Fixed-seed grids at 10k, 25k, 50k | Three tensors/grids and visually inspected progression | PASS |
+| Recognizability | Coherent CIFAR-like structure at 50k | Multiple animal- and vehicle-like forms in frozen grid | PASS |
 
-- Infrastructure: FAILED once before environment creation (`15914281`); repair pending
-- Gate A, 20 steps: NOT RUN
-- Gate B, 250+250 resume and EMA sample: NOT RUN
-- Gate C, maximum 50k: NOT RUN
+## Quantitative result
 
-No loss, throughput, memory, checkpoint, or sample result exists yet.
+- First loss: `1.1303887367`
+- Final loss: `0.0336870030`
+- First 1,000-step mean: `0.0655694469`
+- Last 1,000-step mean: `0.0305275310`
+- Late/early ratio: `0.4655755453` (frozen maximum `0.9`)
+- Runtime: `3,108.897 s` training time; Slurm elapsed `00:52:02`
+- Throughput: `16.083` steps/s, `2,058.608` images/s
+- Peak allocated/reserved device memory: 3.035 / 3.506 GB
+- Final checkpoint SHA-256:
+  `f6b64f7028432ac1690029564610918e68e0c45b5188a97961863eadd79b17b9`
 
-## Current valid conclusion
+## Qualitative result
 
-The production orchestration is locally testable and ready to publish for
-Slurm preflight. The complete system has not yet trained on CIFAR-10, so no
-end-to-end training or image-quality conclusion is supported.
+The same preregistered 16 initial-noise seeds and reverse seed were used at all
+three checkpoints. The 10k grid is dominated by coarse texture; the 25k grid
+develops color-separated silhouettes; the 50k grid contains coherent
+foreground/background layouts and recognizable CIFAR-like animals and
+vehicles. The fixed progression, not selected individual seeds, determines the
+qualitative pass.
 
-## Evidence paths
+## Preserved failures
 
-- Plan: `docs/plans/full_cifar10_training.md`
-- Understanding: `docs/understanding/full_training.md`
-- Config: `configs/full_cifar10_training.json`
-- Trainer: `scripts/train_full_cifar10.py`
-- Orchestration: `src/diffusion_models/full_training.py`
-- Slurm instructions: `cluster/README.md`
-- Experiment record: `Experiments/exp004-full-cifar-10-ddpm-training/try01/report.md`
+Setup job `15914281` failed before environment creation because Hellbender did
+not export `SLURM_TMPDIR`. Commit `7ad4524` added a job-local `/tmp` fallback.
+The first Gate B attempt, job `15914462`, failed before step 1 after the
+ambiguous GPU request landed on a V100 unsupported by the pinned CUDA wheel.
+Its log is preserved under `gate_b_failed_job_15914462`; successful GPU work
+was constrained to H100 without changing any scientific setting.
+
+## Valid conclusion and limitations
+
+The complete DDPM implementation trains stably on CIFAR-10, restores correctly
+across a new process, and produces increasingly structured, recognizable EMA
+samples with the validated 1,000-step ancestral sampler. This milestone does
+not evaluate FID/KID, likelihood, held-out generalization, DDIM, alternative
+architectures or schedules, class conditioning, AMP, or distributed training.
+
+## Evidence
+
+- Authoritative plan: `docs/plans/full_cifar10_training.md`
+- Experiment report:
+  `Experiments/exp004-full-cifar-10-ddpm-training/try01/report.md`
+- Independent metrics audit:
+  `Experiments/exp004-full-cifar-10-ddpm-training/try01/results/full/metrics_summary.json`
+- Remote immutable outputs:
+  `/home/xggh8/data/diffusion-models-from-scratch/exp004-full-cifar10-ddpm-training/try01/`
+
+## Stop decision
+
+The preregistered 50k objective is satisfied. No 100k extension was launched,
+and DDIM remains a separate future milestone requiring a reviewed plan.

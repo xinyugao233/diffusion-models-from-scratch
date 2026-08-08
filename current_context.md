@@ -36,9 +36,13 @@ about generation quality. No training, trained-checkpoint evaluation, FID,
 DDIM, GPU, or dataset work was performed. It was published as commit `7061038`,
 and GitHub Actions run `31154154963` passed 54 tests plus lint and formatting.
 
-Milestone 6 and `EXP004/try01` are now `READY` locally. The authoritative plan
-freezes the existing primary U-Net, linear 1,000-step schedule, AdamW at
-`2e-4`, batch 128, EMA `0.9999`, 20-step Gate A, two-job 250+250 Gate B, and an
-initial 50k maximum. Seven new orchestration tests bring the local suite to 61
-passes. No Slurm job or full-data optimization has run; the next action is to
-publish the exact run commit and submit infrastructure checks before Gate A.
+Milestone 6 and `EXP004/try01` are complete. Commit `7ad4524` passed GitHub
+Actions run `31155794394`; Hellbender jobs `15914422`, `15914482`, `15938195`,
+and `15943245` passed Gate A, the new-process Gate B resume, and the fresh 50k
+run. The full trajectory contains exactly 50,000 contiguous finite records.
+The last-1,000/first-1,000 mean-loss ratio is `0.465576`, passing the frozen
+`0.9` gate, and the visually inspected fixed-seed 10k/25k/50k progression
+reaches recognizable CIFAR-like animal and vehicle forms. The exact result and
+two preserved infrastructure failures are documented in
+`Reports/milestone_06.md`. Stop at 50k; no extension or DDIM implementation is
+authorized without a new reviewed plan.

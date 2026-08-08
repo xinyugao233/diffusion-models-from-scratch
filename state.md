@@ -1,7 +1,7 @@
 # State
 
-- Status: Milestone 5 is remotely closed; Milestone 6 and `EXP004/try01` are
-  `READY` locally under `docs/plans/full_cifar10_training.md`.
+- Status: Milestone 6 and `EXP004/try01` are `COMPLETED`; the frozen 50k
+  full-CIFAR-10 DDPM run and all preflight gates passed.
 - Baseline commit: `706103861c7d12ff3cb7dee037b6a10514b46b5e`
   (`feat: add tested ancestral DDPM sampling`).
 - Remote state: private GitHub repository `xinyugao233/diffusion-models-from-scratch`
@@ -64,8 +64,23 @@
   two-process Gate B resume, and `$SLURM_TMPDIR`-safe cluster scripts.
 - Validation: 61 tests pass; Ruff lint/format, shell syntax, and
   `git diff --check` pass. Tests are CPU-only and dataset-free.
-- Execution status: no Slurm job, real CIFAR-10 update, checkpoint, throughput,
-  memory, or trained sample exists yet.
-- Immediate next action: publish the exact Milestone 6 run commit, sync it to
-  Hellbender, run the environment/check job, then Gate A. Gate B and the 50k
-  run remain gated.
+- Run identity: commit `7ad4524fbbeb61fc78a024ee74e2638644012774`,
+  GitHub Actions `31155794394`, config SHA-256 `8d4480ef...40487`, CIFAR-10
+  archive MD5 `c58f30108f718f92721af3b95e74349a`.
+- Execution: Gate A job `15914422`, Gate B jobs `15914482` and `15938195`, and
+  full job `15943245` completed on H100. The full run produced exactly 50,000
+  unique contiguous finite records, ten 5k-cadence checkpoints, and fixed-seed
+  samples/loss curves at 10k, 25k, and 50k.
+- Full result: first/last 1,000-step mean losses `0.06556945` and `0.03052753`,
+  ratio `0.465576` versus frozen maximum `0.9`; final loss `0.03368700`;
+  16.083 steps/s; 3.035 GB peak allocated memory. The inspected 50k EMA grid
+  contains recognizable CIFAR-like animal and vehicle structure.
+- Preserved infrastructure failures: setup job `15914281` exposed absent
+  `SLURM_TMPDIR`; Gate B attempt `15914462` landed on an unsupported V100
+  before step 1. Both are documented and neither changed scientific settings.
+- Scientific conclusion: the complete DDPM trains stably on CIFAR-10, resumes
+  across a new process, and produces recognizable EMA samples under ancestral
+  sampling. FID/KID, held-out generalization, DDIM, and comparative claims
+  remain untested.
+- Immediate next action: close Milestone 6. No 100k extension or DDIM work is
+  authorized without a new reviewed plan.

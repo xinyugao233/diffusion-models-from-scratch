@@ -2,8 +2,8 @@
 
 ## Status
 
-`READY` — configuration, production trainer, Slurm entrypoints, and local tests
-pass; no Slurm job has been submitted.
+`COMPLETED` — preflight gates and the frozen 50,000-step run passed on
+Hellbender; outputs and figures were validated.
 
 ## Research question
 
@@ -31,17 +31,20 @@ mathematics and architecture.
 
 | Try | Status | Configuration | Conclusion |
 |---|---|---|---|
-| `try01` | `READY` | Primary U-Net, batch 128, linear DDPM, max 50k | Implementation validated; execution pending |
+| `try01` | `COMPLETED` | Primary U-Net, batch 128, linear DDPM, 50k | Stable 50k training, checked resume, and recognizable fixed-seed EMA samples |
 
 ## Current conclusion
 
-No real-data optimization has run. Component-level evidence does not yet prove
-that the complete system produces recognizable samples.
+All 50,000 loss records were finite and contiguous. The last-1,000/first-1,000
+mean-loss ratio was `0.465576`, passing the frozen `0.9` maximum. The 10k,
+25k, and 50k fixed-seed grids show increasing structure, with recognizable
+CIFAR-like animal and vehicle forms at 50k. This supports only the planned
+end-to-end baseline claim; no FID, comparative, or DDIM claim is made.
 
 ## Immediate next action
 
-Publish the exact run commit, pull it to Hellbender, then submit the Slurm
-environment/check gates and Gate A.
+Close Milestone 6. Any 100k extension or DDIM work requires a separate reviewed
+plan and is not authorized by this try.
 
 ## Evidence
 
@@ -49,3 +52,5 @@ environment/check gates and Gate A.
 - Hypothesis: `Experiments/exp004-full-cifar-10-ddpm-training/hypothesis.md`
 - Try: `Experiments/exp004-full-cifar-10-ddpm-training/try01/report.md`
 - Milestone report: `Reports/milestone_06.md`
+- Fixed-seed progression:
+  `Experiments/exp004-full-cifar-10-ddpm-training/try01/figures/full/fixed_seed_progression_010000_025000_050000.png`

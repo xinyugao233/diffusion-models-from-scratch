@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "source": {
+    "remote_path": "/home/xggh8/data/diffusion-models-from-scratch/exp004-full-cifar10-ddpm-training/try01/full/metrics.jsonl",
+    "sha256": "1fbd7e08897f21e0c2fe056bef465e2d11e2a42d106907f04920ec2f0de4896f",
+    "bytes": 18019253
+  },
+  "records": 50000,
+  "steps_contiguous": true,
+  "unique_steps": 50000,
+  "all_numeric_values_finite": true,
+  "loss": {
+    "first": 1.1303887367248535,
+    "final": 0.03368700295686722,
+    "minimum": 0.013119872659444809,
+    "maximum": 1.1303887367248535,
+    "first_1000_mean": 0.06556944690272212,
+    "last_1000_mean": 0.030527530999854207,
+    "late_to_early_ratio": 0.46557554534727746,
+    "frozen_gate_maximum_ratio": 0.9,
+    "frozen_gate_passed": true
+  },
+  "final_record": {
+    "ema_num_updates": 50000,
+    "gradient_norm": 0.07698736821334116,
+    "clipped_gradient_norm": 0.07698736821334116,
+    "steps_per_second": 16.109864220714712,
+    "examples_per_second": 2062.062620251483,
+    "peak_memory_allocated_bytes": 3035344896,
+    "peak_memory_reserved_bytes": 3506438144
+  },
+  "validation": "Independently parsed from the staged raw JSONL after job 15943245 completed."
+}

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #SBATCH --job-name=ddpm_train
 #SBATCH --partition=gpu
-#SBATCH --gres=gpu:1
+#SBATCH --gres=gpu:H100:1
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=64G
 #SBATCH --time=2-00:00:00

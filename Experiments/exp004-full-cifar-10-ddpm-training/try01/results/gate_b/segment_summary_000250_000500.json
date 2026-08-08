@@ -1,0 +1,88 @@
+{
+  "all_losses_finite": true,
+  "batch_size": 128,
+  "checkpoints_written": [
+    {
+      "path": "/tmp/xggh8/ddpm-15938195/run/checkpoints/checkpoint_step_000500.pt",
+      "sha256": "c3f654fd434c024054f4a10fe9944f8497638874bd931f85fc91ed2b9702b1ba",
+      "step": 500
+    }
+  ],
+  "configuration_path": "/cluster/pixstor/home/xggh8/projects/diffusion-models-from-scratch/configs/full_cifar10_training.json",
+  "configuration_sha256": "8d4480ef52c2d299320cc374ae893b07a16690e091c88f303d1b9c8bf0140487",
+  "dataset": {
+    "archive": "/home/xggh8/datasets/cifar10/cifar-10-python.tar.gz",
+    "archive_md5": "c58f30108f718f92721af3b95e74349a",
+    "archive_sha256": "6d958be074577803d12ecdefd02955f39262c83c16fe9348329d7fe0b5c001ce",
+    "training_files": {
+      "batches.meta": "f962466ef690d46b226450fb9aadc74ba4bc64a76aa526b5827fe4bc5c7125cb",
+      "data_batch_1": "54636561a3ce25bd3e19253c6b0d8538147b0ae398331ac4a2d86c6d987368cd",
+      "data_batch_2": "766b2cef9fbc745cf056b3152224f7cf77163b330ea9a15f9392beb8b89bc5a8",
+      "data_batch_3": "0f00d98ebfb30b3ec0ad19f9756dc2630b89003e10525f5e148445e82aa6a1f9",
+      "data_batch_4": "3f7bb240661948b8f4d53e36ec720d8306f5668bd0071dcb4e6c947f78e9682b",
+      "data_batch_5": "d91802434d8376bbaeeadf58a737e3a1b12ac839077e931237e0dcd43adcb154"
+    }
+  },
+  "dataset_size": 50000,
+  "duration_seconds": 26.601523508084938,
+  "ema_differs_from_model": true,
+  "ema_num_updates": 500,
+  "examples_per_second": 1202.9386208002077,
+  "experiment": "EXP004 full CIFAR-10 DDPM training",
+  "final_loss": 0.05557640641927719,
+  "git": {
+    "commit": "7ad4524fbbeb61fc78a024ee74e2638644012774",
+    "working_tree_dirty": false
+  },
+  "metric_record_count": 500,
+  "parameter_count": 12852547,
+  "parameters_changed": true,
+  "passed": true,
+  "peak_memory_allocated_bytes": 3035065344,
+  "peak_memory_reserved_bytes": 3565158400,
+  "resume_checkpoint": "/tmp/xggh8/ddpm-15938195/run/checkpoints/checkpoint_step_000250.pt",
+  "resume_metadata": {
+    "configuration_sha256": "8d4480ef52c2d299320cc374ae893b07a16690e091c88f303d1b9c8bf0140487",
+    "dataset_archive_md5": "c58f30108f718f92721af3b95e74349a",
+    "run_commit": "7ad4524fbbeb61fc78a024ee74e2638644012774",
+    "slurm_job_id": "15914482",
+    "stage": "gate_b"
+  },
+  "samples_written": [
+    {
+      "figure_path": "/tmp/xggh8/ddpm-15938195/run/figures/ema_samples_step_000500.png",
+      "figure_sha256": "b7a423731c2fd72c98fc11bf71dbf737aabd3b3cab391bd56cbfbbc79bd5a01c",
+      "loss_curve_path": "/tmp/xggh8/ddpm-15938195/run/figures/loss_curve_step_000500.png",
+      "loss_curve_sha256": "6fc1c0b7e1e78352d89c8bff17ee45d38dda42da6320563bacbf19c35c9f2b64",
+      "repeated_tensor_sha256": "09eaffc63f22eade4bce464eb7537f7f84254db764f7457b30930aba1376cc20",
+      "reproducible": true,
+      "step": 500,
+      "tensor_file_sha256": "40bd0eab887707f167ec1af82a1b3813170448cfc246cff180c9647d5c9a91ed",
+      "tensor_path": "/tmp/xggh8/ddpm-15938195/run/results/ema_samples_step_000500.pt",
+      "tensor_sha256": "09eaffc63f22eade4bce464eb7537f7f84254db764f7457b30930aba1376cc20"
+    }
+  ],
+  "schema_version": 1,
+  "segment": {
+    "end_step": 500,
+    "start_step": 250
+  },
+  "segment_examples": 32000,
+  "stage": "gate_b",
+  "steps_per_second": 9.397957975001622,
+  "submitted_commit": "7ad4524fbbeb61fc78a024ee74e2638644012774",
+  "system": {
+    "cuda_runtime": "13.0",
+    "cudnn_version": 92000,
+    "device": "cuda:0",
+    "gpu_index": 0,
+    "gpu_name": "NVIDIA H100 NVL",
+    "gpu_total_memory_bytes": 99941482496,
+    "platform": "Linux-4.18.0-553.141.2.el8_10.x86_64-x86_64-with-glibc2.28",
+    "python": "3.13.11",
+    "pytorch": "2.13.0+cu130",
+    "slurm_job_id": "15938195",
+    "slurm_node": "g032"
+  },
+  "try": "try01"
+}

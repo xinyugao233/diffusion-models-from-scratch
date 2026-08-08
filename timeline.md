@@ -51,3 +51,19 @@
 - 2026-08-07: Froze the `EXP004/try01` full CIFAR-10 training plan and
   implemented deterministic production orchestration plus Slurm-only execution
   scripts. Local validation reached 61 passing tests; no training was run.
+
+## 2026-08-08
+
+- Published the Hellbender portability repair as commit `7ad4524`; GitHub
+  Actions run `31155794394` passed 61 tests plus Ruff lint and formatting.
+- Preserved setup job `15914281`, which failed before environment creation
+  because `SLURM_TMPDIR` was unset; repaired setup job `15914382` and Slurm
+  checks job `15914409` completed.
+- Gate A job `15914422` passed 20 real-data steps. Preserved Gate B attempt
+  `15914462`, which was assigned an unsupported V100 before step 1.
+- Gate B H100 jobs `15914482` and `15938195` passed the 250+250 new-process
+  resume and exact repeated-sampling gate with 500 finite contiguous records.
+- Completed full H100 job `15943245`: 50,000 finite contiguous records, ten
+  checkpoints, fixed-seed 10k/25k/50k samples, loss ratio `0.465576`, and
+  recognizable CIFAR-like structure at 50k. Closed `EXP004/try01` and
+  Milestone 6 without launching a 100k extension or DDIM.

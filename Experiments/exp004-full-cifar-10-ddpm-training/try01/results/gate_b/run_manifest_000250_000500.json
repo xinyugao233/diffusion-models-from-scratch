@@ -1,0 +1,39 @@
+{
+  "dataset": {
+    "archive": "/home/xggh8/datasets/cifar10/cifar-10-python.tar.gz",
+    "archive_md5": "c58f30108f718f92721af3b95e74349a",
+    "archive_sha256": "6d958be074577803d12ecdefd02955f39262c83c16fe9348329d7fe0b5c001ce",
+    "training_files": {
+      "batches.meta": "f962466ef690d46b226450fb9aadc74ba4bc64a76aa526b5827fe4bc5c7125cb",
+      "data_batch_1": "54636561a3ce25bd3e19253c6b0d8538147b0ae398331ac4a2d86c6d987368cd",
+      "data_batch_2": "766b2cef9fbc745cf056b3152224f7cf77163b330ea9a15f9392beb8b89bc5a8",
+      "data_batch_3": "0f00d98ebfb30b3ec0ad19f9756dc2630b89003e10525f5e148445e82aa6a1f9",
+      "data_batch_4": "3f7bb240661948b8f4d53e36ec720d8306f5668bd0071dcb4e6c947f78e9682b",
+      "data_batch_5": "d91802434d8376bbaeeadf58a737e3a1b12ac839077e931237e0dcd43adcb154"
+    }
+  },
+  "run_identity": {
+    "configuration_sha256": "8d4480ef52c2d299320cc374ae893b07a16690e091c88f303d1b9c8bf0140487",
+    "end_step": 500,
+    "git_commit": "7ad4524fbbeb61fc78a024ee74e2638644012774",
+    "slurm_job_id": "15938195",
+    "stage": "gate_b",
+    "start_step": 250
+  },
+  "schema_version": 1,
+  "summary_path": "/tmp/xggh8/ddpm-15938195/run/results/segment_summary_000250_000500.json",
+  "summary_sha256": "fbc4d6b448853974c6fd838510c73493f3bd07eba06ba93b4a1aa3c325b49667",
+  "system": {
+    "cuda_runtime": "13.0",
+    "cudnn_version": 92000,
+    "device": "cuda:0",
+    "gpu_index": 0,
+    "gpu_name": "NVIDIA H100 NVL",
+    "gpu_total_memory_bytes": 99941482496,
+    "platform": "Linux-4.18.0-553.141.2.el8_10.x86_64-x86_64-with-glibc2.28",
+    "python": "3.13.11",
+    "pytorch": "2.13.0+cu130",
+    "slurm_job_id": "15938195",
+    "slurm_node": "g032"
+  }
+}

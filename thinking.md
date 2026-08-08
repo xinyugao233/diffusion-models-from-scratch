@@ -34,3 +34,13 @@
 - A decreasing epsilon loss is necessary evidence of optimization but remains
   insufficient for generation. The 10k/25k/50k EMA progression is the first
   end-to-end qualitative gate, and FID/DDIM remain deferred.
+- `EXP004/try01` confirms that distinction empirically: the frozen quantitative
+  loss ratio passed (`0.465576`), while the fixed-seed grids provide separate
+  qualitative evidence of progression from texture at 10k to recognizable
+  CIFAR-like forms at 50k. Neither observation substitutes for FID or held-out
+  evaluation.
+- Cluster hardware identity is part of executable provenance. A memory-based
+  GPU requirement was insufficient because the pinned CUDA 13 wheel supported
+  H100 but not the scheduler-assigned V100; future Slurm plans should constrain
+  a tested GPU type or pin a wheel whose architecture set covers every allowed
+  device.

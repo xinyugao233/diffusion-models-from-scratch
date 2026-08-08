@@ -79,9 +79,11 @@ configs/                  # future training configurations
 4. **EMA and checkpoint-resume:** complete training-state persistence and an
    exact deterministic resume test.
 5. **DDPM sampling:** ancestral reverse process and sample trajectories.
-6. **DDIM and runtime comparison:** deterministic reduced-step sampling using
+6. **Full CIFAR-10 DDPM training:** stable real-data optimization, checked
+   resume, fixed-seed EMA progression, and a first trained checkpoint.
+7. **DDIM and runtime comparison:** deterministic reduced-step sampling using
    the same trained denoiser.
-7. **Recruiter-facing presentation:** reproduction commands, figures, results,
+8. **Recruiter-facing presentation:** reproduction commands, figures, results,
    limitations, and interview-oriented explanations.
 
 The canonical MVP is a tested PyTorch implementation of DDPM and DDIM on
@@ -97,11 +99,13 @@ datasets, deployment, and web interfaces.
 ## Current milestone: first full CIFAR-10 training
 
 Milestone 5 is published at commit `7061038` with green 54-test remote CI.
-Milestone 6 is `READY` locally under `docs/plans/full_cifar10_training.md` and
-`EXP004/try01`: the full-data production trainer, deterministic resume batches,
-logging, fixed-seed EMA evaluation, and Slurm-only execution path pass 61 local
-tests. No real-data optimization has run yet, so no end-to-end training or
-sample-quality conclusion is supported.
+Milestone 6 is complete under `docs/plans/full_cifar10_training.md` and
+`EXP004/try01`. Commit `7ad4524` passed remote CI, the two-process Gate B resume
+passed, and the full H100 run produced 50,000 finite contiguous records. Its
+last-1,000/first-1,000 mean-loss ratio was `0.465576`, below the frozen `0.9`
+maximum, and the fixed 50k EMA grid contains recognizable CIFAR-like structure.
+This supports a first end-to-end DDPM baseline only; FID/KID, DDIM, comparative
+quality, and generalization remain untested.
 
 ## Initial acceptance criteria
 

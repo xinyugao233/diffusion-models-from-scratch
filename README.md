@@ -60,9 +60,9 @@ its limited scientific interpretation are documented in
 - `configs/`: frozen architecture and run configurations
 - `figures/`: generated visual checks
 
-Milestone 3 verifies only that the epsilon-prediction pipeline can learn a
-fixed 16-image dataset. Milestone 5 now implements reverse sampling, but no
-trained-checkpoint generation quality has been evaluated.
+Milestone 3 verifies that the epsilon-prediction pipeline can learn a fixed
+16-image dataset. Milestone 5 validates reverse sampling, and Milestone 6 now
+adds the first complete full-CIFAR-10 training result.
 
 ## Validate exact checkpoint resume
 
@@ -97,7 +97,13 @@ and the validated result is in
 ## Full CIFAR-10 training
 
 Milestone 6 uses the existing primary U-Net and validated DDPM components. Its
-frozen configuration, preflight gates, 50k-step ceiling, and allowed conclusions
-are in [docs/plans/full_cifar10_training.md](docs/plans/full_cifar10_training.md).
-Heavy execution is Slurm-only; [cluster/README.md](cluster/README.md) contains
-the guarded Hellbender commands. No full-data training result exists yet.
+frozen configuration and gates are in
+[docs/plans/full_cifar10_training.md](docs/plans/full_cifar10_training.md).
+The 50,000-step H100 run completed with 50,000 finite contiguous records; the
+last-1,000/first-1,000 mean-loss ratio was `0.465576`, and the fixed-seed EMA
+progression reached recognizable CIFAR-like samples. See
+[Reports/milestone_06.md](Reports/milestone_06.md) for exact provenance,
+failures, artifacts, and limitations. Heavy reproduction remains Slurm-only
+through the guarded commands in [cluster/README.md](cluster/README.md).
+
+![10k, 25k, and 50k fixed-seed EMA progression](Experiments/exp004-full-cifar-10-ddpm-training/try01/figures/full/fixed_seed_progression_010000_025000_050000.png)

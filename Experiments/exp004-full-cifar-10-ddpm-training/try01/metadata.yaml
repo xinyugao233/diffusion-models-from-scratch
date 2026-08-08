@@ -3,17 +3,20 @@ project: diffusion-models-from-scratch
 experiment: exp004-full-cifar-10-ddpm-training
 try_number: try01
 goal: Stable full CIFAR-10 DDPM training and recognizable EMA samples
-status: READY
+status: COMPLETED
 parent_baseline: Milestone 5
 baseline_git_commit: 706103861c7d12ff3cb7dee037b6a10514b46b5e
-remote_ci_run: 31154154963
-run_git_commit: TBD
+remote_ci_run: 31155794394
+run_git_commit: 7ad4524fbbeb61fc78a024ee74e2638644012774
 preflight_commits:
   - 7a11b6e79d5828f68a0c7055069e95c56741052b
 configuration_path: configs/full_cifar10_training.json
 configuration_hash: 8d4480ef52c2d299320cc374ae893b07a16690e091c88f303d1b9c8bf0140487
 dataset: Official CIFAR-10 Python training split, 50,000 images
-dataset_identity: TBD
+dataset_identity:
+  archive_md5: c58f30108f718f92721af3b95e74349a
+  archive_sha256: 6d958be074577803d12ecdefd02955f39262c83c16fe9348329d7fe0b5c001ce
+  count: 50000
 random_seeds:
   model: 101
   data_order: 103
@@ -21,27 +24,71 @@ random_seeds:
   fixed_reverse_noise: 109
   fixed_initial_noise: 1000-1015
 evaluation_rule: Frozen Gate A/B/C rules in docs/plans/full_cifar10_training.md
-environment: Hellbender Slurm, CUDA float32; exact versions TBD
-hardware: One Slurm-assigned GPU with at least 32 GB; exact model TBD
+environment: Python 3.13.11, PyTorch 2.13.0+cu130, torchvision 0.28.0+cu130, CUDA 13.0, cuDNN 92000
+hardware: NVIDIA H100 NVL, 99941482496 bytes device memory; Slurm nodes g032 and g033
 job_ids:
   - id: 15914281
     purpose: environment setup
     state: FAILED
     exit_code: "1:0"
+  - id: 15914382
+    purpose: environment setup after portability repair
+    state: COMPLETED
+    exit_code: "0:0"
+  - id: 15914409
+    purpose: dataset-free CPU checks
+    state: COMPLETED
+    exit_code: "0:0"
+  - id: 15914422
+    purpose: Gate A, 20 steps
+    state: COMPLETED
+    exit_code: "0:0"
+  - id: 15914462
+    purpose: Gate B first attempt; scheduler assigned unsupported V100
+    state: FAILED_BEFORE_STEP_1
+    exit_code: "1:0"
+  - id: 15914482
+    purpose: Gate B steps 1-250 on H100
+    state: COMPLETED
+    exit_code: "0:0"
+  - id: 15938195
+    purpose: Gate B new-process resume, steps 251-500 on H100
+    state: COMPLETED
+    exit_code: "0:0"
+  - id: 15943245
+    purpose: Gate C, fresh 50,000-step run on H100
+    state: COMPLETED
+    exit_code: "0:0"
 persistent_output: /home/xggh8/data/diffusion-models-from-scratch/exp004-full-cifar10-ddpm-training/try01
 expected_records:
   gate_a_metrics: 20
   gate_b_metrics: 500
   full_metrics: 50000
-observed_records: null
-exit_state: Infrastructure setup failed before environment creation; training not run
+observed_records:
+  gate_a_metrics: 20
+  gate_b_metrics: 500
+  full_metrics: 50000
+exit_state: Completed and validated; final training job exit code 0:0
+results:
+  gate_a_passed: true
+  gate_b_passed: true
+  full_loss_gate_passed: true
+  first_1000_mean_loss: 0.06556944690272212
+  last_1000_mean_loss: 0.030527530999854207
+  late_to_early_loss_ratio: 0.46557554534727746
+  final_loss: 0.03368700295686722
+  fixed_seed_progression_recognizable: true
+  metrics_sha256: 1fbd7e08897f21e0c2fe056bef465e2d11e2a42d106907f04920ec2f0de4896f
+  final_checkpoint_sha256: f6b64f7028432ac1690029564610918e68e0c45b5188a97961863eadd79b17b9
+  final_sample_grid_sha256: 0f4722987cd549736543e64c3383d06b6a71b0a3fd891bd1c6b3032217cfa1f4
+  progression_figure_sha256: 35a69bddc3d384e2544a157e6ed0e8fc83958225c0247433490aa0365f54f99c
 source_hashes:
   orchestration: 54e6cc9f88c7602ab6f7622d16df6a1d7f235c4d5de4d03003286ccbb1a3f3fd
   trainer: 8aa1aa79db88d25aaf9317f59ccbad262c934a57f14c4e255b55e9fe11f3e81f
-  slurm_train: 287739fe0faf6ae186e70f2ad05fe2f2cace52694579fe627d282d7835790101
+  executed_slurm_train: 287739fe0faf6ae186e70f2ad05fe2f2cace52694579fe627d282d7835790101
 local_validation:
   tests: 61
   lint: passed
   formatting: passed
   shell_syntax: passed
-next_step: Publish the SLURM_TMPDIR fallback fix, sync the new exact commit, and resubmit environment setup
+next_step: Close Milestone 6; do not extend past 50k or begin DDIM without a new reviewed plan
