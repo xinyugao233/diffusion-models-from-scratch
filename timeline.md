@@ -67,3 +67,10 @@
   checkpoints, fixed-seed 10k/25k/50k samples, loss ratio `0.465576`, and
   recognizable CIFAR-like structure at 50k. Closed `EXP004/try01` and
   Milestone 6 without launching a 100k extension or DDIM.
+
+## 2026-08-12
+- Created experiment scaffold `exp005-ddim-sampling-speed-quality-comparison` for `DDIM sampling speed-quality comparison`.
+- Added initial index entry for `EXP005`.
+- Implemented deterministic DDIM sampling, froze the four-setting comparison,
+  and passed 71 local CPU tests plus Ruff and launcher checks. `EXP005/try01`
+  is ready for exact-commit remote and Slurm validation.

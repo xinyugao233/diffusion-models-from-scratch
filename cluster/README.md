@@ -39,3 +39,19 @@ All caches and active work remain in `$SLURM_TMPDIR` when the cluster provides
 it; otherwise the scripts use a job-specific directory under `/tmp`. Only
 required logs, checkpoints, metrics, manifests, and figures are staged to
 `~/data`.
+
+## Milestone 7 sampler comparison
+
+The deterministic DDIM comparison reuses the completed 50k EMA checkpoint. It
+does not train or download a dataset:
+
+```bash
+run_commit=$(git rev-parse HEAD)
+sbatch --export=ALL,RUN_COMMIT="$run_commit" \
+  --output="$log_root/ddim-comparison-%j.out" \
+  cluster/sbatch_ddim_comparison.sh
+```
+
+The launcher refuses an existing `EXP005/try01`, verifies the exact clean run
+commit, copies the checkpoint to job-local scratch, and stages the small result
+bundle to `~/data/diffusion-models-from-scratch/exp005-ddim-comparison/try01`.

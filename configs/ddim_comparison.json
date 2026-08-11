@@ -1,0 +1,78 @@
+{
+  "checkpoint": {
+    "expected_global_step": 50000,
+    "expected_sha256": "f6b64f7028432ac1690029564610918e68e0c45b5188a97961863eadd79b17b9",
+    "remote_path": "/home/xggh8/data/diffusion-models-from-scratch/exp004-full-cifar10-ddpm-training/try01/full/checkpoints/checkpoint_step_050000.pt"
+  },
+  "diffusion": {
+    "beta_end": 0.02,
+    "beta_start": 0.0001,
+    "num_steps": 1000,
+    "schedule": "linear"
+  },
+  "evaluation": {
+    "clip_x_start": true,
+    "ddpm_reverse_noise_seed": 109,
+    "fixed_initial_noise_seeds": [
+      1000,
+      1001,
+      1002,
+      1003,
+      1004,
+      1005,
+      1006,
+      1007,
+      1008,
+      1009,
+      1010,
+      1011,
+      1012,
+      1013,
+      1014,
+      1015
+    ],
+    "precision": "float32",
+    "sample_count": 16,
+    "timed_repeats": 3,
+    "untimed_warmup": true
+  },
+  "experiment": {
+    "name": "EXP005 DDIM sampling speed-quality comparison",
+    "parent": "EXP004/try01",
+    "try": "try01"
+  },
+  "hardware": {
+    "required_gpu_substring": "H100"
+  },
+  "model": {
+    "configuration": "primary_unet",
+    "expected_parameter_count": 12852547
+  },
+  "settings": [
+    {
+      "model_evaluations": 1000,
+      "name": "ddpm_1000",
+      "sampler": "ddpm"
+    },
+    {
+      "model_evaluations": 100,
+      "name": "ddim_100",
+      "sampler": "ddim"
+    },
+    {
+      "model_evaluations": 50,
+      "name": "ddim_50",
+      "sampler": "ddim"
+    },
+    {
+      "model_evaluations": 25,
+      "name": "ddim_25",
+      "sampler": "ddim"
+    }
+  ],
+  "training_config": {
+    "expected_sha256": "8d4480ef52c2d299320cc374ae893b07a16690e091c88f303d1b9c8bf0140487",
+    "path": "configs/full_cifar10_training.json",
+    "stage": "full"
+  }
+}
