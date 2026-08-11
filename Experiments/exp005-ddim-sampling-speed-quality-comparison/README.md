@@ -2,8 +2,8 @@
 
 ## Status
 
-`READY` — deterministic DDIM implementation and local validation pass;
-checkpoint execution is pending.
+`SUBMITTED` — deterministic DDIM implementation and all preflight gates pass;
+H100 job `16409278` is queued for capacity.
 
 ## Purpose
 
@@ -28,7 +28,7 @@ steps, and what visible structure remains for the same 16 initial tensors?
 
 | Try | Status | Conclusion |
 |---|---|---|
-| `try01` | `READY` | Implementation validated; execution pending |
+| `try01` | `SUBMITTED` | Job `16409278` pending; no result yet |
 
 ## Evidence
 

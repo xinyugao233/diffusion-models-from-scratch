@@ -82,5 +82,13 @@
   across a new process, and produces recognizable EMA samples under ancestral
   sampling. FID/KID, held-out generalization, DDIM, and comparative claims
   remain untested.
-- Immediate next action: close Milestone 6. No 100k extension or DDIM work is
-  authorized without a new reviewed plan.
+- Milestone 7 implementation: deterministic eta-zero DDIM with rounded
+  endpoint-preserving timestep selection and exact call-count validation.
+  Commit `20c6ea9` passed GitHub Actions run `31545879080` and cluster checks
+  job `16409245` with 71 tests plus Ruff lint and formatting.
+- `EXP005/try01`: `SUBMITTED`; H100 job `16409278` is pending with scheduler
+  reason `Priority`. It will compare DDPM-1000 with DDIM-100/50/25 using the
+  exact 50k EMA checkpoint and fixed initial seeds `1000..1015`. No result is
+  claimed yet.
+- Immediate next action: monitor job `16409278`, validate exact output counts,
+  hashes, and timing records, then visually inspect every fixed-seed grid.

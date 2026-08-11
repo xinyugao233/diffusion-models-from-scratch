@@ -3,19 +3,19 @@ project: diffusion-models-from-scratch
 experiment: exp005-ddim-sampling-speed-quality-comparison
 try_number: try01
 goal: DDIM sampling speed-quality comparison
-status: READY
+status: SUBMITTED
 parent_experiment: EXP004/try01
 checkpoint_path: /home/xggh8/data/diffusion-models-from-scratch/exp004-full-cifar10-ddpm-training/try01/full/checkpoints/checkpoint_step_050000.pt
 checkpoint_sha256: f6b64f7028432ac1690029564610918e68e0c45b5188a97961863eadd79b17b9
 checkpoint_step: 50000
-run_git_commit: TBD
+run_git_commit: 20c6ea9fd8b558016a1e995abb7db0ea723962fc
 config_path: configs/ddim_comparison.json
 config_sha256: 80c6e27776ff6aa839145fa09cae006a17dbbc1a3ae3d138bf6379fe387a1108
 random_seeds:
   fixed_initial_noise: 1000-1015
   ddpm_reverse_noise: 109
 dataset: No dataset loaded; evaluation uses one trained CIFAR-10 checkpoint
-environment: Hellbender Slurm H100; exact job identity TBD
+environment: Hellbender Slurm H100; job 16409278 pending for capacity
 important_parameters:
   sample_count: 16
   timing_repeats: 3
@@ -29,5 +29,9 @@ expected_outputs:
   comparison_figure: 1
 results_summary: null
 figures: []
-job_ids: []
-next_step: Publish the exact run commit, pass remote CI and Slurm checks, then execute one comparison job
+job_ids: [16409245, 16409278]
+output_path: /home/xggh8/data/diffusion-models-from-scratch/exp005-ddim-comparison/try01
+submission_time: 2026-08-11T18:20:43
+scheduler_state: PENDING
+scheduler_reason: Priority
+next_step: Monitor job 16409278 to completion, validate artifacts, and inspect every grid

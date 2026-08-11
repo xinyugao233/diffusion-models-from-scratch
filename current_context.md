@@ -46,3 +46,11 @@ reaches recognizable CIFAR-like animal and vehicle forms. The exact result and
 two preserved infrastructure failures are documented in
 `Reports/milestone_06.md`. Stop at 50k; no extension or DDIM implementation is
 authorized without a new reviewed plan.
+
+Milestone 7 and `EXP005/try01` are `SUBMITTED`. Deterministic eta-zero DDIM,
+the frozen DDPM-1000 versus DDIM-100/50/25 protocol, and guarded execution are
+published at commit `20c6ea9fd8b558016a1e995abb7db0ea723962fc`.
+GitHub Actions run `31545879080` and Hellbender checks job `16409245` passed 71
+tests plus Ruff lint and formatting. H100 comparison job `16409278` is pending
+with reason `Priority`; no runtime, image-quality, or completion claim exists
+until its outputs are validated and visually inspected.
