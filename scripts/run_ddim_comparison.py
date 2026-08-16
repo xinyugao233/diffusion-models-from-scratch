@@ -145,10 +145,18 @@ def make_runtime_figure(path: Path, records: list[dict[str, Any]]) -> None:
         bar_width = (width - left - right) * record["median_seconds"] / maximum
         draw.text((20, y + 10), record["name"], fill="black")
         draw.rectangle((left, y, left + bar_width, y + 35), fill="#2563eb")
+        label = f"{record['median_seconds']:.3f}s | {record['model_evaluations']} evals"
+        label_box = draw.textbbox((0, 0), label)
+        label_width = label_box[2] - label_box[0]
+        label_x = left + bar_width + 8
+        label_fill = "black"
+        if label_x + label_width > width - right:
+            label_x = left + bar_width - label_width - 8
+            label_fill = "white"
         draw.text(
-            (left + bar_width + 8, y + 10),
-            f"{record['median_seconds']:.3f}s | {record['model_evaluations']} evals",
-            fill="black",
+            (label_x, y + 10),
+            label,
+            fill=label_fill,
         )
     if path.exists():
         raise FileExistsError(f"Refusing to overwrite figure: {path}")

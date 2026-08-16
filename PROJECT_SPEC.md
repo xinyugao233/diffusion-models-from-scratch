@@ -96,16 +96,20 @@ The following are explicitly outside the MVP: EDM, flow matching, class
 conditioning, distributed training, large-scale FID sweeps, additional
 datasets, deployment, and web interfaces.
 
-## Current milestone: first full CIFAR-10 training
+## Current milestone: technical MVP complete
 
-Milestone 5 is published at commit `7061038` with green 54-test remote CI.
-Milestone 6 is complete under `docs/plans/full_cifar10_training.md` and
-`EXP004/try01`. Commit `7ad4524` passed remote CI, the two-process Gate B resume
-passed, and the full H100 run produced 50,000 finite contiguous records. Its
-last-1,000/first-1,000 mean-loss ratio was `0.465576`, below the frozen `0.9`
-maximum, and the fixed 50k EMA grid contains recognizable CIFAR-like structure.
-This supports a first end-to-end DDPM baseline only; FID/KID, DDIM, comparative
-quality, and generalization remain untested.
+Milestone 6 established the full-CIFAR-10 trained DDPM under `EXP004/try01`.
+Milestone 7 and `EXP005/try01` then reused its exact 50k EMA checkpoint for a
+frozen H100 comparison: DDIM-100/50/25 achieved exact call counts and measured
+synchronized median speedups of `10.2397x`, `20.5184x`, and `41.0284x` versus
+DDPM-1000. All repeated outputs were bitwise stable and the fixed 16-seed grids
+remained recognizably CIFAR-like. This completes the tested DDPM/DDIM MVP, but
+does not establish FID/KID, distribution-level quality, generalization, or
+cross-hardware performance.
+
+DDPM remains intrinsically stochastic; its repeats were bitwise reproducible
+under a frozen reverse RNG seed. Eta-zero DDIM is deterministic conditional on
+the initial `x_T` because it requires no reverse-step random draws.
 
 ## Initial acceptance criteria
 

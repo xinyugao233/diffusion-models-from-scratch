@@ -44,3 +44,13 @@
   H100 but not the scheduler-assigned V100; future Slurm plans should constrain
   a tested GPU type or pin a wheel whose architecture set covers every allowed
   device.
+- `EXP005/try01` confirms the expected cost reduction on the frozen H100 setup:
+  measured DDIM speedups closely track reduced NFE without being inferred from
+  NFE ratios. The fixed samples remain recognizable even at 25 calls, so the
+  preregistered monotonic visual-degradation expectation is not clearly visible
+  in only 16 seeds. That absence must not be upgraded into a quality-equivalence
+  claim without distribution-level metrics.
+- Pairing is strongest when the run stores the materialized initial tensor
+  identity, not only seed labels. EXP005 uses one tensor object across every
+  condition, but its missing run-recorded `x_T` hash remains a bookkeeping
+  limitation to fix in future comparison infrastructure.

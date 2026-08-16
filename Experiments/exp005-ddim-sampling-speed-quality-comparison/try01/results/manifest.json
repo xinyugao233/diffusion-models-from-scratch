@@ -1,0 +1,32 @@
+{
+  "artifacts": {
+    "figures/ddim_100_grid.png": "42bb4cc90b68b0f482042d6ffd471fed4f92c16d12ed77278cc3ee020e0059f3",
+    "figures/ddim_25_grid.png": "e126d7d26c7ec14b34ec0e0c31e3d7ea69c2c0b425dae2af1955233a7009bd71",
+    "figures/ddim_50_grid.png": "04ae04b757edd62311c7fddcc05f2648ad87f73d2e903f7e0c52117a4fe1b1eb",
+    "figures/ddpm_1000_grid.png": "0f4722987cd549736543e64c3383d06b6a71b0a3fd891bd1c6b3032217cfa1f4",
+    "figures/ddpm_ddim_headline.png": "9614403d36c81ddc2140204b9f649429b98e2df1fb3b8994e7f97339efa5c03b",
+    "figures/runtime_comparison.png": "a3b7c4a90c02bd55b057828936580919ce7d9078cb09f1096878fa7d08898d21",
+    "results/ddim_100_samples.pt": "f7e6b545cebd27354b1fe6c39e003701a4c2a09d056396c75e93c57a444e3480",
+    "results/ddim_25_samples.pt": "7089404685fd7a199bb4502878349c128ce6d2c00fbdda11cbaa0c7bf4be62d7",
+    "results/ddim_50_samples.pt": "621e9969b0f389f2fa0138175c5ca513422df5badd5c8113383de61a1e657bc3",
+    "results/ddpm_1000_samples.pt": "65a0f2abc506803a8954504d225c8b1f11b4480e6f0f1ed3ac5447259e5eff96"
+  },
+  "checkpoint_path": "/tmp/xggh8/ddim-compare-16409278/checkpoint_step_050000.pt",
+  "checkpoint_sha256": "f6b64f7028432ac1690029564610918e68e0c45b5188a97961863eadd79b17b9",
+  "comparison_sha256": "97aaec5bdb831d11b92ab1621aacdd9ee147b8da68aeb8fb6320cd1c057c4a62",
+  "config_path": "/cluster/pixstor/home/xggh8/projects/diffusion-models-from-scratch/configs/ddim_comparison.json",
+  "config_sha256": "80c6e27776ff6aa839145fa09cae006a17dbbc1a3ae3d138bf6379fe387a1108",
+  "run_commit": "20c6ea9fd8b558016a1e995abb7db0ea723962fc",
+  "system": {
+    "cuda_runtime": "13.0",
+    "cudnn_version": 92000,
+    "gpu_index": 0,
+    "gpu_name": "NVIDIA H100 NVL",
+    "gpu_total_memory_bytes": 99941482496,
+    "platform": "Linux-4.18.0-553.153.1.el8_10.x86_64-x86_64-with-glibc2.28",
+    "python": "3.13.11",
+    "pytorch": "2.13.0+cu130",
+    "slurm_job_id": "16409278",
+    "slurm_node": "g033"
+  }
+}

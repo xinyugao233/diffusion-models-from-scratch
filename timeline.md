@@ -74,3 +74,10 @@
 - Implemented deterministic DDIM sampling, froze the four-setting comparison,
   and passed 71 local CPU tests plus Ruff and launcher checks. `EXP005/try01`
   is ready for exact-commit remote and Slurm validation.
+- Completed H100 job `16409278` from exact commit `20c6ea9`; the four frozen
+  settings passed call-count, shape, finiteness, deterministic-repeat, and
+  artifact-integrity gates. DDIM-100/50/25 measured median speedups of
+  `10.2397x`, `20.5184x`, and `41.0284x` versus DDPM-1000.
+- Visually inspected all paired fixed-seed grids. Every setting remained
+  recognizably CIFAR-like, while no clear monotonic DDIM-100-to-25 degradation
+  appeared in the 16-seed set. Closed `EXP005/try01` and the technical MVP.

@@ -47,10 +47,14 @@ two preserved infrastructure failures are documented in
 `Reports/milestone_06.md`. Stop at 50k; no extension or DDIM implementation is
 authorized without a new reviewed plan.
 
-Milestone 7 and `EXP005/try01` are `SUBMITTED`. Deterministic eta-zero DDIM,
-the frozen DDPM-1000 versus DDIM-100/50/25 protocol, and guarded execution are
-published at commit `20c6ea9fd8b558016a1e995abb7db0ea723962fc`.
-GitHub Actions run `31545879080` and Hellbender checks job `16409245` passed 71
-tests plus Ruff lint and formatting. H100 comparison job `16409278` is pending
-with reason `Priority`; no runtime, image-quality, or completion claim exists
-until its outputs are validated and visually inspected.
+Milestone 7 and `EXP005/try01` are complete. Deterministic eta-zero DDIM, the
+frozen DDPM-1000 versus DDIM-100/50/25 protocol, and guarded execution were run
+from commit `20c6ea9fd8b558016a1e995abb7db0ea723962fc`. H100 job `16409278`
+completed with exit `0:0`; exact NFEs, finite output shapes, repeated hashes,
+checkpoint/config identities, and staged artifacts validate. Synchronized
+median runtimes were `4.611370`, `0.450342`, `0.224743`, and `0.112395` seconds,
+for DDIM speedups of `10.2397x`, `20.5184x`, and `41.0284x`. Visual inspection
+found recognizable CIFAR-like structure in every grid and no clear monotonic
+DDIM-100-to-25 degradation for the frozen 16 seeds. The technical DDPM/DDIM MVP
+is complete; next work is recruiter-facing presentation, not another model or
+training extension.

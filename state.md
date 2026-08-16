@@ -86,9 +86,23 @@
   endpoint-preserving timestep selection and exact call-count validation.
   Commit `20c6ea9` passed GitHub Actions run `31545879080` and cluster checks
   job `16409245` with 71 tests plus Ruff lint and formatting.
-- `EXP005/try01`: `SUBMITTED`; H100 job `16409278` is pending with scheduler
-  reason `Priority`. It will compare DDPM-1000 with DDIM-100/50/25 using the
-  exact 50k EMA checkpoint and fixed initial seeds `1000..1015`. No result is
-  claimed yet.
-- Immediate next action: monitor job `16409278`, validate exact output counts,
-  hashes, and timing records, then visually inspect every fixed-seed grid.
+- `EXP005/try01`: `COMPLETED`; H100 job `16409278` exited `0:0` after 25
+  scheduler seconds on `g033`. The exact run commit, 50k EMA checkpoint, config,
+  training config, manifest, stdout, and all staged artifact hashes validate.
+- Result: DDPM-1000 and DDIM-100/50/25 used exact NFEs and median runtimes
+  `4.611370`, `0.450342`, `0.224743`, and `0.112395` seconds. Median DDIM
+  speedups were `10.2397x`, `20.5184x`, and `41.0284x`; every repeated output
+  matched bitwise and every sample tensor was finite `[16,3,32,32]`.
+- Determinism interpretation: DDPM is intrinsically stochastic but repeated
+  bitwise under the frozen reverse RNG seed. Eta-zero DDIM requires no reverse-
+  step random draws and is deterministic conditional on the initial `x_T`.
+- Visual conclusion: all four fixed grids contain recognizable CIFAR-like
+  structure. DDIM-100/50/25 are highly similar and do not show clear monotonic
+  degradation in this 16-seed set. No FID/KID or distribution-level claim is
+  supported.
+- Provenance limitation: the exact code reused one materialized initial tensor
+  across every condition, but the run did not store its hash. A locally derived
+  frozen-function batch hash is recorded separately and is not primary run
+  evidence.
+- Immediate next action: stop technical model development and prepare the
+  recruiter-facing README, figures, CV bullets, and interview review.

@@ -107,3 +107,24 @@ failures, artifacts, and limitations. Heavy reproduction remains Slurm-only
 through the guarded commands in [cluster/README.md](cluster/README.md).
 
 ![10k, 25k, and 50k fixed-seed EMA progression](Experiments/exp004-full-cifar-10-ddpm-training/try01/figures/full/fixed_seed_progression_010000_025000_050000.png)
+
+## Deterministic DDIM acceleration
+
+Milestone 7 reuses the exact 50k EMA checkpoint and the same 16 initial tensors
+to compare DDPM-1000 with deterministic DDIM-100/50/25 on one H100 NVL. The
+observed synchronized median runtimes were `4.611370`, `0.450342`, `0.224743`,
+and `0.112395` seconds, giving measured DDIM speedups of `10.2397x`,
+`20.5184x`, and `41.0284x`. Every condition used its exact frozen NFE, produced
+a finite `[16,3,32,32]` tensor, and repeated bitwise.
+
+DDPM is intrinsically stochastic, but repeated runs were bitwise reproducible
+under the frozen reverse RNG seed. DDIM with `eta=0` requires no reverse-step
+random draws and is deterministic conditional on the initial `x_T`.
+
+The fixed grids remain recognizably CIFAR-like at all three DDIM step counts;
+no clear monotonic 100-to-25 visual degradation is evident in this 16-seed
+set. This is not FID/KID or a distribution-level quality claim. See
+[Reports/milestone_07.md](Reports/milestone_07.md) for exact timings, hashes,
+visual assessment, provenance, and limitations.
+
+![Paired DDPM-1000 and DDIM-100/50/25 samples](Experiments/exp005-ddim-sampling-speed-quality-comparison/try01/figures/ddpm_ddim_headline.png)
