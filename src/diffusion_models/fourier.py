@@ -33,9 +33,7 @@ def project_hermitian(channels: Tensor) -> Tensor:
 def fourier_channels_to_image(channels: Tensor) -> Tensor:
     """Return the real image represented by possibly imperfect Fourier channels."""
     projected = project_hermitian(channels)
-    return torch.fft.ifft2(
-        fourier_channels_to_complex(projected), norm="ortho"
-    ).real
+    return torch.fft.ifft2(fourier_channels_to_complex(projected), norm="ortho").real
 
 
 def inverse_imaginary_residual(channels: Tensor) -> Tensor:

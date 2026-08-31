@@ -92,12 +92,16 @@ def make_models(seed: int) -> tuple[CIFAR10UNet, CIFAR10UNet, dict[str, Any]]:
         else:
             boundary_names.append(name)
     fourier.load_state_dict(fourier_state)
-    return spatial, fourier, {
-        "spatial_parameter_count": spatial.trainable_parameter_count,
-        "fourier_parameter_count": fourier.trainable_parameter_count,
-        "shared_state_tensor_count": len(shared_names),
-        "shape_specific_state_tensors": boundary_names,
-    }
+    return (
+        spatial,
+        fourier,
+        {
+            "spatial_parameter_count": spatial.trainable_parameter_count,
+            "fourier_parameter_count": fourier.trainable_parameter_count,
+            "shared_state_tensor_count": len(shared_names),
+            "shape_specific_state_tensors": boundary_names,
+        },
+    )
 
 
 def optimizer_for(model: nn.Module, config: dict[str, Any]) -> torch.optim.Optimizer:
@@ -130,19 +134,24 @@ def paired_training_batch(
         generator=generator,
     )
     alpha = extract(schedule.sqrt_alpha_bars, timesteps, images.shape).to(images.dtype)
-    sigma = extract(
-        schedule.sqrt_one_minus_alpha_bars, timesteps, images.shape
-    ).to(images.dtype)
+    sigma = extract(schedule.sqrt_one_minus_alpha_bars, timesteps, images.shape).to(
+        images.dtype
+    )
     spatial_x_t = alpha * images + sigma * spatial_noise
     fourier_clean = image_to_fourier_channels(images)
     fourier_noise = image_to_fourier_channels(spatial_noise)
-    fourier_x_t = (
-        alpha * fourier_clean + sigma * fourier_noise
-    )
+    fourier_x_t = alpha * fourier_clean + sigma * fourier_noise
     commutation_error = (
-        image_to_fourier_channels(spatial_x_t) - fourier_x_t
-    ).abs().amax()
-    return timesteps, spatial_noise, spatial_x_t, fourier_noise, fourier_x_t, commutation_error
+        (image_to_fourier_channels(spatial_x_t) - fourier_x_t).abs().amax()
+    )
+    return (
+        timesteps,
+        spatial_noise,
+        spatial_x_t,
+        fourier_noise,
+        fourier_x_t,
+        commutation_error,
+    )
 
 
 def optimize_condition(
@@ -236,9 +245,7 @@ def fourier_ddim(
         clipped_image = fourier_channels_to_image(predicted_clean).clamp(-1.0, 1.0)
         predicted_clean = image_to_fourier_channels(clipped_image)
         if previous == -1:
-            alpha_previous = torch.ones(
-                (), device=sample.device, dtype=sample.dtype
-            )
+            alpha_previous = torch.ones((), device=sample.device, dtype=sample.dtype)
         else:
             alpha_previous = schedule.alpha_bars[previous].to(
                 device=sample.device, dtype=sample.dtype
@@ -273,9 +280,7 @@ def memorization_metrics(samples: Tensor, references: Tensor) -> dict[str, Any]:
         "memorized_count": int(memorized.sum().item()),
         "memorization_rate": float(memorized.float().mean().item()),
         "unique_training_neighbors_hit": int((counts > 0).sum().item()),
-        "unique_training_neighbor_fraction": float(
-            (counts > 0).float().mean().item()
-        ),
+        "unique_training_neighbor_fraction": float((counts > 0).float().mean().item()),
         "maximum_duplicate_count": int(counts.max().item()),
         "mean_d1": float(d1.mean().item()),
         "mean_d2": float(d2.mean().item()),
@@ -412,9 +417,7 @@ def main() -> int:
         "spatial": spatial_model.to(device),
         "fourier": fourier_model.to(device),
     }
-    optimizers = {
-        name: optimizer_for(model, config) for name, model in models.items()
-    }
+    optimizers = {name: optimizer_for(model, config) for name, model in models.items()}
     emas = {
         name: ExponentialMovingAverage(model, decay=config["training"]["ema_decay"])
         for name, model in models.items()

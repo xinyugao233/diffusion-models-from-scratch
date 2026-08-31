@@ -22,9 +22,7 @@ def test_fourier_round_trip_and_parseval() -> None:
 
 
 def test_hermitian_projection_is_idempotent() -> None:
-    channels = torch.randn(
-        (2, 6, 32, 32), generator=torch.Generator().manual_seed(12)
-    )
+    channels = torch.randn((2, 6, 32, 32), generator=torch.Generator().manual_seed(12))
     projected = project_hermitian(channels)
     torch.testing.assert_close(project_hermitian(projected), projected)
     assert inverse_imaginary_residual(projected).item() < 1e-5
@@ -48,7 +46,7 @@ def test_paired_forward_noise_commutes_with_fft() -> None:
     alpha = torch.tensor(0.37).sqrt()
     sigma = torch.tensor(0.63).sqrt()
     spatial = alpha * image + sigma * noise
-    spectral = alpha * image_to_fourier_channels(image) + sigma * image_to_fourier_channels(
-        noise
-    )
+    spectral = alpha * image_to_fourier_channels(
+        image
+    ) + sigma * image_to_fourier_channels(noise)
     torch.testing.assert_close(image_to_fourier_channels(spatial), spectral)
