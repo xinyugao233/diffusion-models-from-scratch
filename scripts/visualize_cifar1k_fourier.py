@@ -10,7 +10,7 @@ import pickle
 from pathlib import Path
 
 import numpy as np
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw
 
 
 LABELS = (
