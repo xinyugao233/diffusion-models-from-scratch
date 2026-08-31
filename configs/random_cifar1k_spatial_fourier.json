@@ -1,0 +1,53 @@
+{
+  "data": {
+    "root": "/home/xggh8/datasets/cifar10",
+    "subset_start": 0,
+    "subset_count": 1000,
+    "batch_size": 128,
+    "num_workers": 4
+  },
+  "diffusion": {
+    "schedule": "linear",
+    "num_steps": 1000,
+    "beta_start": 0.0001,
+    "beta_end": 0.02
+  },
+  "model": {
+    "configuration": "primary_unet",
+    "base_channels": 64,
+    "spatial_channels": 3,
+    "fourier_channels": 6
+  },
+  "training": {
+    "paired_seeds": [0, 1, 2],
+    "maximum_steps": 100000,
+    "gradient_clip": 1.0,
+    "ema_decay": 0.9999,
+    "deterministic_algorithms": true,
+    "optimizer": {
+      "name": "AdamW",
+      "learning_rate": 0.0002,
+      "betas": [0.9, 0.999],
+      "eps": 1e-08,
+      "weight_decay": 0.0
+    }
+  },
+  "evaluation": {
+    "checkpoint_every": 5000,
+    "sample_count": 1024,
+    "sample_batch_size": 128,
+    "ddim_steps": 50,
+    "memorization_ratio_divisor": 3.0,
+    "memorization_rate_threshold": 0.9,
+    "consecutive_checkpoints": 2,
+    "fresh_confirmation_sample_count": 1024,
+    "fixed_sample_seed_offset": 40000,
+    "fresh_sample_seed_offset": 50000,
+    "grid_count": 64
+  },
+  "experiment": {
+    "name": "random CIFAR-1K spatial versus Fourier memorization",
+    "try": "try01",
+    "scope": "independent side experiment"
+  }
+}

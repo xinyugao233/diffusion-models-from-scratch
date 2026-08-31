@@ -1,0 +1,9 @@
+status: planned
+date_authorized: 2026-08-31
+actor: codex
+question: Does a lossless Fourier representation change memorization speed for the same CIFAR-1K subset and convolutional U-Net?
+hypothesis: Representation-U-Net interaction changes paired optimization steps to a frozen nearest-neighbor memorization threshold.
+dataset: CIFAR-10 first 1000 canonical training examples
+paired_seeds: [0, 1, 2]
+config: configs/random_cifar1k_spatial_fourier.json
+result_root: /home/xggh8/data/diffusion-models-from-scratch/random-cifar1k-spatial-fourier/try01
