@@ -1,0 +1,14 @@
+{
+  "dataset": "CIFAR-10 training split",
+  "subset": "first 1000 examples in canonical batch order",
+  "image_shape": [3, 32, 32],
+  "image_normalization": "x / 127.5 - 1",
+  "fft": "numpy rfft2 norm=ortho with exact Parseval half-plane weights",
+  "radial_bin": "floor(sqrt(fx^2 + fy^2)) in unshifted integer-frequency coordinates",
+  "channel_aggregation": "mean over images, RGB channels, and full-plane sites in each shell",
+  "source_repository": "research-context-hub",
+  "source_commit": "5de3c5ef23333484a1406fca712206105b9f0bd4",
+  "source_path": "experiments/exp006-full-spectral-calm-surfaces/try01/results/fullspace_gate_1k/radial_power.csv",
+  "source_script_sha256": "37ea80919f5f92c09ce4dfad01ddc3bbf19f6912d8de60bd26100cbffb60cd7c",
+  "role": "dataset-level diagnostic spectrum; not evidence of a causal memorization boundary"
+}

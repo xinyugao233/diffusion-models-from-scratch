@@ -47,6 +47,11 @@ from diffusion_models.full_training import (
     sampling_steps,
 )
 from diffusion_models.models import CIFAR10UNet, primary_unet_config
+from diffusion_models.spectral_boundary import (
+    RadialPower,
+    SpectralBoundaryConfig,
+    load_radial_power,
+)
 
 
 def file_sha256(path: Path) -> str:
@@ -77,6 +82,25 @@ def validate_configuration(config: dict[str, Any], stage: str) -> dict[str, Any]
     if stage not in config["stages"]:
         raise ValueError(f"Unknown stage {stage!r}.")
     return config["stages"][stage]
+
+
+def load_spectral_boundary_configuration(
+    config: dict[str, Any],
+) -> tuple[RadialPower, SpectralBoundaryConfig] | None:
+    """Load the optional loss feature without touching the baseline path."""
+    values = config.get("spectral_boundary_loss")
+    if values is None or not values.get("enabled", False):
+        return None
+    radial_power = load_radial_power(repository_path(values["radial_power_path"]))
+    boundary_config = SpectralBoundaryConfig(
+        tau=float(values["tau"]),
+        weight_floor=float(values["weight_floor"]),
+        normalization=values["normalization"],
+        fft_normalization=values["fft_normalization"],
+        sigma_min=values.get("sigma_min"),
+        sigma_max=values.get("sigma_max"),
+    )
+    return radial_power, boundary_config
 
 
 def dataset_identity(root: Path) -> dict[str, Any]:
@@ -175,6 +199,7 @@ def main() -> int:
     config_path = repository_path(args.config)
     config = load_json(config_path)
     stage_config = validate_configuration(config, args.stage)
+    spectral_boundary = load_spectral_boundary_configuration(config)
     maximum_steps = int(stage_config["max_steps"])
     if not 0 < args.segment_end <= maximum_steps:
         raise ValueError("segment-end must lie in [1, stage max_steps].")
@@ -312,11 +337,11 @@ def main() -> int:
             schedule,
             generator=training_generator,
             max_gradient_norm=config["training"]["gradient_clip"],
+            spectral_boundary=spectral_boundary,
         )
         segment_examples += images.shape[0]
         elapsed = time.perf_counter() - start_time
-        logger.log(
-            step,
+        metric_values: dict[str, float | str] = dict(
             loss=metrics.loss,
             gradient_norm=metrics.gradient_norm,
             clipped_gradient_norm=metrics.clipped_gradient_norm,
@@ -327,6 +352,32 @@ def main() -> int:
             peak_memory_allocated_bytes=torch.cuda.max_memory_allocated(device),
             peak_memory_reserved_bytes=torch.cuda.max_memory_reserved(device),
         )
+        if metrics.spectral_boundary is not None:
+            diagnostics = metrics.spectral_boundary
+            metric_values.update(
+                weighted_loss=metrics.loss,
+                unweighted_loss=metrics.unweighted_loss,
+                sigma_mean=float(diagnostics.sigma_mean.detach().item()),
+                sigma_min=float(diagnostics.sigma_min.detach().item()),
+                sigma_max=float(diagnostics.sigma_max.detach().item()),
+                spectral_boundary_active_fraction=float(
+                    diagnostics.active_fraction.detach().item()
+                ),
+                peak_radial_shell_mean=float(
+                    diagnostics.peak_shell_mean.detach().item()
+                ),
+                information_radius_mean=float(
+                    diagnostics.information_radius_mean.detach().item()
+                ),
+                mean_spectral_weight=float(diagnostics.mean_weight.detach().item()),
+                maximum_spectral_weight=float(
+                    diagnostics.maximum_weight.detach().item()
+                ),
+                effective_weighted_shell_count=float(
+                    diagnostics.effective_shell_count.detach().item()
+                ),
+            )
+        logger.log(step, **metric_values)
         if step == 1 or step % 10 == 0 or step == args.segment_end:
             print(
                 f"step={step} loss={metrics.loss:.6f} "

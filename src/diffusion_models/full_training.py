@@ -15,6 +15,12 @@ from torch.utils.data import Sampler
 
 from diffusion_models.diffusion import DDPMSchedule
 from diffusion_models.ema import ExponentialMovingAverage
+from diffusion_models.spectral_boundary import (
+    RadialPower,
+    SpectralBoundaryConfig,
+    SpectralBoundaryDiagnostics,
+    weighted_spectral_loss,
+)
 from diffusion_models.training import (
     epsilon_prediction_loss,
     gradient_norm,
@@ -27,9 +33,11 @@ class ProductionStepMetrics:
     """Measurements from one complete production optimizer/EMA update."""
 
     loss: float
+    unweighted_loss: float
     gradient_norm: float
     clipped_gradient_norm: float
     ema_num_updates: int
+    spectral_boundary: SpectralBoundaryDiagnostics | None = None
 
 
 class DeterministicStepBatchSampler(Sampler[list[int]]):
@@ -130,6 +138,7 @@ def production_train_step(
     *,
     generator: torch.Generator,
     max_gradient_norm: float,
+    spectral_boundary: tuple[RadialPower, SpectralBoundaryConfig] | None = None,
     event_callback: Callable[[str], None] | None = None,
 ) -> ProductionStepMetrics:
     """Run one explicit checked optimizer step followed by one EMA update."""
@@ -144,7 +153,20 @@ def production_train_step(
     )
     optimizer.zero_grad(set_to_none=True)
     notify("zero_grad")
-    loss, _ = epsilon_prediction_loss(model, batch)
+    unweighted_loss, prediction = epsilon_prediction_loss(model, batch)
+    diagnostics = None
+    if spectral_boundary is None:
+        # Preserve the original scalar and computation graph exactly.
+        loss = unweighted_loss
+    else:
+        radial_power, boundary_config = spectral_boundary
+        loss, diagnostics = weighted_spectral_loss(
+            prediction - batch.target_noise,
+            batch.timesteps,
+            schedule,
+            radial_power,
+            boundary_config,
+        )
     loss.backward()
     notify("backward")
 
@@ -161,9 +183,11 @@ def production_train_step(
 
     return ProductionStepMetrics(
         loss=float(loss.detach().item()),
+        unweighted_loss=float(unweighted_loss.detach().item()),
         gradient_norm=float(before_clipping.item()),
         clipped_gradient_norm=float(after_clipping.item()),
         ema_num_updates=ema.num_updates,
+        spectral_boundary=diagnostics,
     )
 
 
