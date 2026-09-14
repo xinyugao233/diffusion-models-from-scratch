@@ -40,6 +40,22 @@ class SpectralBoundaryConfig:
 
 
 @dataclass(frozen=True)
+class StaticSpectralConfig:
+    """A serialized timestep-invariant radial weighting control."""
+
+    weights: Tensor
+    fft_normalization: str = "ortho"
+
+    def __post_init__(self) -> None:
+        if self.weights.ndim != 1 or not self.weights.is_floating_point():
+            raise ValueError("Static weights must be a one-dimensional floating tensor.")
+        if not torch.isfinite(self.weights).all() or torch.any(self.weights <= 0.0):
+            raise ValueError("Every static weight must be finite and positive.")
+        if self.fft_normalization != "ortho":
+            raise ValueError("Only the E006-compatible 'ortho' FFT is supported.")
+
+
+@dataclass(frozen=True)
 class RadialPower:
     """Dataset-level mean power and full-FFT multiplicity for radial shells."""
 
@@ -86,6 +102,43 @@ def load_radial_power(path: str | Path) -> RadialPower:
     if not torch.isfinite(counts).all() or torch.any(counts <= 0.0):
         raise ValueError("Every radial shell count must be finite and positive.")
     return RadialPower(power=powers, coefficient_counts=counts)
+
+
+def load_static_spectral_control(
+    path: str | Path,
+) -> tuple[RadialPower, StaticSpectralConfig]:
+    """Load a combined radial-power and serialized static-control CSV."""
+    rows: list[tuple[int, float, int, float]] = []
+    with Path(path).open(newline="", encoding="utf-8") as handle:
+        for row in csv.DictReader(handle):
+            rows.append(
+                (
+                    int(row["radius"]),
+                    float(row["shell_power"]),
+                    int(row["full_fft_sites_per_channel"]),
+                    float(row["static_weight"]),
+                )
+            )
+    if not rows or [row[0] for row in rows] != list(range(len(rows))):
+        raise ValueError("Static-control radii must be contiguous and start at zero.")
+    radial_power = RadialPower(
+        power=torch.tensor([row[1] for row in rows], dtype=torch.float64),
+        coefficient_counts=torch.tensor(
+            [row[2] for row in rows], dtype=torch.float64
+        ),
+    )
+    static_config = StaticSpectralConfig(
+        weights=torch.tensor([row[3] for row in rows], dtype=torch.float64)
+    )
+    if not torch.isfinite(radial_power.power).all() or torch.any(
+        radial_power.power <= 0.0
+    ):
+        raise ValueError("Every radial shell power must be finite and positive.")
+    if not torch.isfinite(radial_power.coefficient_counts).all() or torch.any(
+        radial_power.coefficient_counts <= 0.0
+    ):
+        raise ValueError("Every radial shell count must be finite and positive.")
+    return radial_power, static_config
 
 
 def radial_shell_indices(height: int, width: int, *, device: torch.device) -> Tensor:
@@ -143,6 +196,35 @@ def compute_boundary_weights(
     return weights
 
 
+def compute_static_matched_weights(
+    radial_power: RadialPower,
+    schedule: DDPMSchedule,
+    moving_config: SpectralBoundaryConfig,
+    *,
+    dtype: torch.dtype = torch.float64,
+) -> Tensor:
+    """Average normalized moving weights over every uniform DDPM timestep."""
+    timesteps = torch.arange(
+        schedule.num_steps, device=schedule.alpha_bars.device, dtype=torch.long
+    )
+    sigma = effective_additive_sigma(schedule, timesteps, dtype=dtype)
+    return compute_boundary_weights(radial_power, sigma, moving_config).mean(dim=0)
+
+
+def compute_spectral_weights(
+    radial_power: RadialPower,
+    sigma: Tensor,
+    config: SpectralBoundaryConfig | StaticSpectralConfig,
+) -> Tensor:
+    """Return moving or exactly timestep-invariant shell weights."""
+    if isinstance(config, SpectralBoundaryConfig):
+        return compute_boundary_weights(radial_power, sigma, config)
+    if config.weights.numel() != radial_power.power.numel():
+        raise ValueError("Static weights and radial power have different shell counts.")
+    weights = config.weights.to(device=sigma.device, dtype=sigma.dtype)
+    return weights[None, :].expand(sigma.shape[0], -1)
+
+
 def radial_power_map(shell_weights: Tensor, shell_indices: Tensor) -> Tensor:
     """Map ``[batch, shell]`` weights onto unshifted full-FFT coefficients."""
     if shell_weights.ndim != 2 or shell_indices.ndim != 2:
@@ -157,9 +239,9 @@ def weighted_spectral_loss(
     timesteps: Tensor,
     schedule: DDPMSchedule,
     radial_power: RadialPower,
-    config: SpectralBoundaryConfig,
+    config: SpectralBoundaryConfig | StaticSpectralConfig,
 ) -> tuple[Tensor, SpectralBoundaryDiagnostics]:
-    """Weight epsilon residual power by the moving empirical boundary.
+    """Weight epsilon residual power by moving or static radial weights.
 
     The reduction remains coefficient based. With coefficient-mean-normalized
     uniform weights, Parseval makes this exactly the ordinary pixel MSE up to
@@ -171,7 +253,7 @@ def weighted_spectral_loss(
     if timesteps.shape != (residual.shape[0],):
         raise ValueError("timesteps must contain one value per residual image.")
     sigma = effective_additive_sigma(schedule, timesteps, dtype=residual.dtype)
-    shell_weights = compute_boundary_weights(radial_power, sigma, config)
+    shell_weights = compute_spectral_weights(radial_power, sigma, config)
     shell_indices = radial_shell_indices(
         residual.shape[-2], residual.shape[-1], device=residual.device
     )
@@ -200,7 +282,7 @@ def weighted_spectral_loss(
     information_radius = torch.where(valid, radii[None, :], -1).amax(dim=1)
     peak_shell = shell_weights.argmax(dim=1)
     active = torch.ones_like(sigma, dtype=torch.bool)
-    if config.sigma_min is not None:
+    if isinstance(config, SpectralBoundaryConfig) and config.sigma_min is not None:
         active = (sigma >= config.sigma_min) & (sigma <= config.sigma_max)
     active_peak_mean = (
         peak_shell[active].to(residual.dtype).mean()

@@ -50,7 +50,9 @@ from diffusion_models.models import CIFAR10UNet, primary_unet_config
 from diffusion_models.spectral_boundary import (
     RadialPower,
     SpectralBoundaryConfig,
+    StaticSpectralConfig,
     load_radial_power,
+    load_static_spectral_control,
 )
 
 
@@ -86,11 +88,18 @@ def validate_configuration(config: dict[str, Any], stage: str) -> dict[str, Any]
 
 def load_spectral_boundary_configuration(
     config: dict[str, Any],
-) -> tuple[RadialPower, SpectralBoundaryConfig] | None:
+) -> tuple[RadialPower, SpectralBoundaryConfig | StaticSpectralConfig] | None:
     """Load the optional loss feature without touching the baseline path."""
     values = config.get("spectral_boundary_loss")
     if values is None or not values.get("enabled", False):
         return None
+    mode = values.get("mode", "moving")
+    if mode == "static":
+        return load_static_spectral_control(
+            repository_path(values["static_control_path"])
+        )
+    if mode != "moving":
+        raise ValueError("spectral_boundary_loss mode must be 'moving' or 'static'.")
     radial_power = load_radial_power(repository_path(values["radial_power_path"]))
     boundary_config = SpectralBoundaryConfig(
         tau=float(values["tau"]),

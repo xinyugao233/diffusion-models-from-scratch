@@ -22,6 +22,14 @@ schedule. Wild-middle-only weighting is reserved for a later ablation.
 5. Verify that evaluation and logging use isolated random-number generators.
 6. Run the full test/lint preflight at the exact clean training commit.
 
+The spectrum gate completed in Slurm job `17378951`. It selected the 50K
+spectrum by the preregistered rule because the relative change at `r=22` was
+8.9239%. That shell has one coefficient per channel. The estimated frontier
+remained highly stable: 19/1000 DDPM timesteps changed `R_MI`, by at most one
+shell, and no original E006-grid crossing changed. The threshold is preserved;
+this fact is recorded as a sensitivity caveat rather than used to revise the
+rule post hoc.
+
 Passing these gates authorizes neither the 12 long training runs nor any change
 to the preregistered analysis. Training begins only as an explicit subsequent
 step.

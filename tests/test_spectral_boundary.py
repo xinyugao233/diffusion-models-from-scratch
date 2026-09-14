@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import math
 from pathlib import Path
 
 import pytest
@@ -12,7 +13,10 @@ from diffusion_models.ema import ExponentialMovingAverage
 from diffusion_models.full_training import production_train_step
 from diffusion_models.spectral_boundary import (
     SpectralBoundaryConfig,
+    StaticSpectralConfig,
     compute_boundary_weights,
+    compute_spectral_weights,
+    compute_static_matched_weights,
     effective_additive_sigma,
     load_radial_power,
     radial_shell_indices,
@@ -20,6 +24,9 @@ from diffusion_models.spectral_boundary import (
 )
 
 POWER_PATH = Path(__file__).parents[1] / "configs" / "cifar10_e006_radial_power.csv"
+POWER_50K_PATH = (
+    Path(__file__).parents[1] / "configs" / "cifar10_50k_radial_power.csv"
+)
 
 
 class TinyNoisePredictor(nn.Module):
@@ -178,3 +185,72 @@ def test_weighted_loss_changes_only_the_residual_objective() -> None:
         atol=1e-6,
         rtol=1e-6,
     )
+
+
+def test_static_control_is_timestep_invariant_and_normalized() -> None:
+    radial_power = load_radial_power(POWER_50K_PATH)
+    schedule = make_linear_ddpm_schedule(num_steps=1000)
+    moving = SpectralBoundaryConfig(tau=math.log(2.0), weight_floor=0.1)
+    static = compute_static_matched_weights(radial_power, schedule, moving)
+    config = StaticSpectralConfig(weights=static)
+    sigma = torch.tensor([0.01, 0.1, 1.0, 10.0, 100.0], dtype=torch.float64)
+
+    weights = compute_spectral_weights(radial_power, sigma, config)
+
+    assert all(torch.equal(weights[0], row) for row in weights[1:])
+    coefficient_mean = (
+        static * radial_power.coefficient_counts
+    ).sum() / radial_power.coefficient_counts.sum()
+    torch.testing.assert_close(
+        coefficient_mean,
+        torch.ones_like(coefficient_mean),
+        rtol=0.0,
+        atol=1e-14,
+    )
+
+
+def test_static_control_is_exact_uniform_timestep_marginal() -> None:
+    radial_power = load_radial_power(POWER_50K_PATH)
+    schedule = make_linear_ddpm_schedule(num_steps=1000)
+    moving = SpectralBoundaryConfig(tau=math.log(2.0), weight_floor=0.1)
+    static = compute_static_matched_weights(radial_power, schedule, moving)
+    timesteps = torch.arange(schedule.num_steps)
+    sigma = effective_additive_sigma(schedule, timesteps, dtype=torch.float64)
+
+    expected = compute_boundary_weights(radial_power, sigma, moving).mean(dim=0)
+
+    torch.testing.assert_close(static, expected, rtol=0.0, atol=0.0)
+
+
+def test_static_control_uses_full_fft_multiplicities() -> None:
+    radial_power = load_radial_power(POWER_50K_PATH)
+    shells = radial_shell_indices(32, 32, device=torch.device("cpu"))
+    actual = torch.bincount(shells.flatten(), minlength=radial_power.power.numel())
+
+    torch.testing.assert_close(
+        actual.to(torch.float64),
+        radial_power.coefficient_counts,
+        rtol=0.0,
+        atol=0.0,
+    )
+    assert int(actual.sum()) == 32 * 32
+
+
+def test_static_spectral_loss_ignores_timestep_for_weights() -> None:
+    generator = torch.Generator().manual_seed(71)
+    residual = torch.randn((2, 3, 32, 32), generator=generator, dtype=torch.float64)
+    radial_power = load_radial_power(POWER_50K_PATH)
+    schedule = make_linear_ddpm_schedule(num_steps=1000)
+    moving = SpectralBoundaryConfig(tau=math.log(2.0), weight_floor=0.1)
+    config = StaticSpectralConfig(
+        weights=compute_static_matched_weights(radial_power, schedule, moving)
+    )
+
+    first, _ = weighted_spectral_loss(
+        residual, torch.tensor([0, 999]), schedule, radial_power, config
+    )
+    second, _ = weighted_spectral_loss(
+        residual, torch.tensor([500, 500]), schedule, radial_power, config
+    )
+
+    torch.testing.assert_close(first, second, rtol=0.0, atol=0.0)

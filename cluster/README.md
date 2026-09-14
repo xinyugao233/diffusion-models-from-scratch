@@ -75,3 +75,20 @@ materiality rule uses the 50K spectrum for intervention training when the
 maximum absolute per-shell relative difference from E006 exceeds 5%, more than
 5% of DDPM timesteps change crossing shell, or any crossing moves by more than
 one shell. Otherwise the E006 first-1K spectrum remains frozen.
+
+## Static matched-spectrum control
+
+After selecting the 50K spectrum, materialize the static narrow control under
+Slurm and validate timestep invariance, coefficient normalization, exact
+marginal matching, serialization, and full-FFT multiplicities:
+
+```bash
+run_commit=$(git rev-parse HEAD)
+sbatch --export=ALL,RUN_COMMIT="$run_commit",ATTEMPT=try01 \
+  --output="$log_root/static-control-%j.out" \
+  cluster/sbatch_static_control.sh
+```
+
+Results are staged to
+`~/data/diffusion-models-from-scratch/static-control/try01`. This job does not
+load CIFAR-10 images or launch training.

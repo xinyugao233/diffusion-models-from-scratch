@@ -18,11 +18,12 @@ data order, fixed evaluation noises, checkpoint names, append-only JSONL
 metrics, and output manifests are deterministic and explicitly recorded.
 
 The repository already uses complete orthonormal FFTs in
-`diffusion_models.fourier`. The empirical spectrum reused here comes from the
-validated E006 1K CIFAR-10 gate. It used an orthonormal `rfft2`, exact
-half-plane Parseval weights, floor-radius bins, averaging over images, RGB
-channels, and full-plane sites per shell. The copied CSV is accompanied by a
-provenance record in `configs/`.
+`diffusion_models.fourier`. A preregistered gate compared E006 1K with all 50K
+CIFAR-10 training images and selected the 50K spectrum while showing that the
+induced frontier was highly stable. Both estimates used an orthonormal
+`rfft2`, exact half-plane Parseval weights, floor-radius bins, averaging over
+images, RGB channels, and full-plane sites per shell. The copied CSV is
+accompanied by a provenance record in `configs/`.
 
 ## Hook and objective
 
@@ -66,9 +67,10 @@ Add this object to a copy of the baseline training JSON:
 ```json
 "spectral_boundary_loss": {
   "enabled": true,
-  "radial_power_path": "configs/cifar10_e006_radial_power.csv",
-  "tau": 1.0,
-  "weight_floor": 0.05,
+  "mode": "moving",
+  "radial_power_path": "configs/cifar10_50k_radial_power.csv",
+  "tau": 0.6931471805599453,
+  "weight_floor": 0.1,
   "normalization": "coefficient_mean",
   "fft_normalization": "ortho",
   "sigma_min": null,
@@ -76,16 +78,19 @@ Add this object to a copy of the baseline training JSON:
 }
 ```
 
-Suggested initial configurations, to be frozen before any run:
+The frozen primary moving settings are `tau=ln(2)` and `tau=ln(4)`, both with
+`weight_floor=0.1` and no sigma gate. The static control uses:
 
-- baseline: omit the object or set `enabled` to false;
-- broad: `tau=1.0`, `weight_floor=0.05`, no sigma limits;
-- narrow: `tau=0.35`, `weight_floor=0.05`, no sigma limits;
-- wild-middle only: the broad or narrow setting with `sigma_min=0.14` and
-  `sigma_max=8.4`.
+```json
+"spectral_boundary_loss": {
+  "enabled": true,
+  "mode": "static",
+  "static_control_path": "configs/cifar10_50k_static_narrow_matched.csv"
+}
+```
 
-These tau and floor values are starting points, not validated optima. The two
-sigma limits must either both be numbers or both be null/omitted.
+The static CSV is the uniform average across all 1,000 individually normalized
+narrow moving vectors. Wild-middle gating is not a primary treatment.
 
 Enabled runs append both `weighted_loss` and `unweighted_loss`, the effective
 sigma range, active-example fraction, mean peak shell, mean information radius,

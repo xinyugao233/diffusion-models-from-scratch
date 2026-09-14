@@ -10,9 +10,12 @@
   },
   "spectrum_gate": {
     "reference": "configs/cifar10_e006_radial_power.csv",
-    "candidate": "radial_power_50k.csv from scripts/compare_cifar10_radial_power.py",
+    "candidate": "configs/cifar10_50k_radial_power.csv",
     "decision": "Use the 50K spectrum if max absolute per-shell relative change exceeds 0.05, more than 0.05 of DDPM timesteps change R_MI, or any DDPM crossing moves by more than one shell; otherwise retain E006-1K.",
-    "status": "pending_slurm_result"
+    "status": "completed",
+    "selected": "configs/cifar10_50k_radial_power.csv",
+    "interpretation": "Use 50K spectrum by preregistered rule; 1K and 50K frontier estimates are nevertheless highly stable.",
+    "sensitivity_caveat": "The 5% criterion fired only at r=22, which has one coefficient per channel; 19/1000 DDPM timesteps changed R_MI by at most one shell and no E006-grid crossing changed."
   },
   "conditions": {
     "baseline": {

@@ -19,6 +19,7 @@ from diffusion_models.spectral_boundary import (
     RadialPower,
     SpectralBoundaryConfig,
     SpectralBoundaryDiagnostics,
+    StaticSpectralConfig,
     weighted_spectral_loss,
 )
 from diffusion_models.training import (
@@ -138,7 +139,10 @@ def production_train_step(
     *,
     generator: torch.Generator,
     max_gradient_norm: float,
-    spectral_boundary: tuple[RadialPower, SpectralBoundaryConfig] | None = None,
+    spectral_boundary: tuple[
+        RadialPower, SpectralBoundaryConfig | StaticSpectralConfig
+    ]
+    | None = None,
     event_callback: Callable[[str], None] | None = None,
 ) -> ProductionStepMetrics:
     """Run one explicit checked optimizer step followed by one EMA update."""

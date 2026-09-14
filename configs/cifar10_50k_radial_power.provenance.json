@@ -1,0 +1,16 @@
+{
+  "dataset": "CIFAR-10 training split",
+  "subset": "all 50000 examples in canonical batch order",
+  "image_shape": [3, 32, 32],
+  "image_normalization": "x / 127.5 - 1",
+  "fft": "numpy rfft2 norm=ortho with exact Parseval half-plane weights",
+  "radial_bin": "floor(sqrt(fx^2 + fy^2) + 1e-12) in unshifted integer-frequency coordinates",
+  "channel_aggregation": "mean over images, RGB channels, and full-plane sites in each shell",
+  "gate_job_id": "17378951",
+  "gate_commit": "5fb0cda55894669f923c558b2824e44cfaa0621f",
+  "source_artifact_sha256": "931bd6c602aba7d6ce07e9d8a3960ea3fa879c8ccff82b4afc3fc78c325a6d77",
+  "selection": "Use 50K spectrum by preregistered rule; 1K and 50K frontier estimates are nevertheless highly stable.",
+  "selection_trigger": "maximum absolute shell-relative difference 0.08923923769393464 at r=22 exceeded 0.05",
+  "sensitivity_caveat": "r=22 contains one full-plane coefficient per channel; all other shells changed by less than 0.05, only 19/1000 DDPM timesteps changed R_MI, the maximum R_MI shift was one shell, and 0/20 E006-grid crossings changed",
+  "role": "selected dataset-level spectrum for the moving and static spectral intervention"
+}
