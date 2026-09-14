@@ -4,6 +4,8 @@ from pathlib import Path
 
 import pytest
 import torch
+from torch import nn
+from torch.nn import functional as F
 
 from diffusion_models.diffusion import make_linear_ddpm_schedule
 from diffusion_models.ema import ExponentialMovingAverage
@@ -16,8 +18,6 @@ from diffusion_models.spectral_boundary import (
     radial_shell_indices,
     weighted_spectral_loss,
 )
-from torch import nn
-from torch.nn import functional as F
 
 
 POWER_PATH = (
