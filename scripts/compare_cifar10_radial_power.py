@@ -15,10 +15,6 @@ import sys
 import time
 from pathlib import Path
 
-import matplotlib
-
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt
 import numpy as np
 
 
@@ -185,7 +181,14 @@ def plot_comparison(
     reference: np.ndarray,
     full: np.ndarray,
     relative: np.ndarray,
-) -> None:
+) -> bool:
+    try:
+        import matplotlib
+
+        matplotlib.use("Agg")
+        import matplotlib.pyplot as plt
+    except ModuleNotFoundError:
+        return False
     radii = np.arange(RMAX + 1)
     figure, axes = plt.subplots(2, 1, figsize=(7.2, 7.0), constrained_layout=True)
     axes[0].semilogy(radii, reference, "o-", label="E006 first 1K")
@@ -199,6 +202,7 @@ def plot_comparison(
     axes[1].grid(axis="y", alpha=0.25)
     figure.savefig(output_path, dpi=180)
     plt.close(figure)
+    return True
 
 
 def main() -> None:
@@ -283,7 +287,7 @@ def main() -> None:
         list(e006_rows[0]),
         e006_rows,
     )
-    plot_comparison(
+    figure_created = plot_comparison(
         args.output_dir / "radial_power_1k_vs_50k.png", reference, full, relative
     )
 
@@ -339,6 +343,9 @@ def main() -> None:
         "platform": platform.platform(),
         "numpy": np.__version__,
         "runtime_seconds": time.time() - started,
+        "warnings": []
+        if figure_created
+        else ["matplotlib unavailable; comparison PNG was not generated"],
     }
     (args.output_dir / "summary.json").write_text(
         json.dumps(summary, indent=2) + "\n", encoding="utf-8"
