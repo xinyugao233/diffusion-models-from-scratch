@@ -19,9 +19,7 @@ from diffusion_models.spectral_boundary import (
     weighted_spectral_loss,
 )
 
-POWER_PATH = (
-    Path(__file__).parents[1] / "configs" / "cifar10_e006_radial_power.csv"
-)
+POWER_PATH = Path(__file__).parents[1] / "configs" / "cifar10_e006_radial_power.csv"
 
 
 class TinyNoisePredictor(nn.Module):
@@ -61,9 +59,7 @@ def test_effective_sigma_uses_additive_coordinates() -> None:
 def test_boundary_peak_moves_outward_as_sigma_decreases() -> None:
     radial_power = load_radial_power(POWER_PATH)
     config = SpectralBoundaryConfig(tau=0.3, weight_floor=0.05)
-    weights = compute_boundary_weights(
-        radial_power, torch.tensor([4.0, 0.02]), config
-    )
+    weights = compute_boundary_weights(radial_power, torch.tensor([4.0, 0.02]), config)
 
     assert int(weights[1].argmax()) > int(weights[0].argmax())
 
@@ -119,9 +115,10 @@ def test_extreme_weight_parameters_remain_finite(
 
 def test_disabled_production_path_is_bitwise_identical() -> None:
     schedule = make_linear_ddpm_schedule(num_steps=10)
-    images = torch.rand(
-        (2, 3, 4, 4), generator=torch.Generator().manual_seed(51)
-    ) * 2.0 - 1.0
+    images = (
+        torch.rand((2, 3, 4, 4), generator=torch.Generator().manual_seed(51)) * 2.0
+        - 1.0
+    )
 
     def build():
         torch.manual_seed(52)
@@ -162,9 +159,7 @@ def test_disabled_production_path_is_bitwise_identical() -> None:
 
 
 def test_weighted_loss_changes_only_the_residual_objective() -> None:
-    residual = torch.randn(
-        (2, 3, 32, 32), generator=torch.Generator().manual_seed(61)
-    )
+    residual = torch.randn((2, 3, 32, 32), generator=torch.Generator().manual_seed(61))
     schedule = make_linear_ddpm_schedule(num_steps=1000)
     timesteps = torch.tensor([100, 800], dtype=torch.long)
     weighted, diagnostics = weighted_spectral_loss(

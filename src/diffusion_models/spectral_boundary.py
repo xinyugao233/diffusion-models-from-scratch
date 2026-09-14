@@ -35,9 +35,7 @@ class SpectralBoundaryConfig:
             raise ValueError("Only the E006-compatible 'ortho' FFT is supported.")
         if (self.sigma_min is None) != (self.sigma_max is None):
             raise ValueError("sigma_min and sigma_max must be set together.")
-        if self.sigma_min is not None and not (
-            0.0 < self.sigma_min <= self.sigma_max
-        ):
+        if self.sigma_min is not None and not (0.0 < self.sigma_min <= self.sigma_max):
             raise ValueError("Expected 0 < sigma_min <= sigma_max.")
 
 
@@ -124,9 +122,7 @@ def compute_boundary_weights(
     if not torch.isfinite(sigma).all() or torch.any(sigma <= 0.0):
         raise ValueError("sigma values must be finite and positive.")
     power = radial_power.power.to(device=sigma.device, dtype=sigma.dtype)
-    counts = radial_power.coefficient_counts.to(
-        device=sigma.device, dtype=sigma.dtype
-    )
+    counts = radial_power.coefficient_counts.to(device=sigma.device, dtype=sigma.dtype)
     log_snr = torch.log(power)[None, :] - 2.0 * torch.log(sigma)[:, None]
     log_kernel = -0.5 * (log_snr / config.tau).square()
     if config.weight_floor == 0.0 and config.normalization == "coefficient_mean":
@@ -190,12 +186,10 @@ def weighted_spectral_loss(
         raise ValueError(
             "Radial-power multiplicities do not match the residual FFT grid."
         )
-    spectrum = torch.fft.fft2(
-        residual, dim=(-2, -1), norm=config.fft_normalization
+    spectrum = torch.fft.fft2(residual, dim=(-2, -1), norm=config.fft_normalization)
+    per_example_loss = (spectrum.abs().square() * coefficient_weights[:, None]).mean(
+        dim=(1, 2, 3)
     )
-    per_example_loss = (
-        spectrum.abs().square() * coefficient_weights[:, None]
-    ).mean(dim=(1, 2, 3))
     loss = per_example_loss.mean()
     if not torch.isfinite(loss):
         raise FloatingPointError("Nonfinite weighted spectral loss detected.")
