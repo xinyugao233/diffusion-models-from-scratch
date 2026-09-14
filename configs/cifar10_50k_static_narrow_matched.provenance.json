@@ -1,0 +1,36 @@
+{
+  "object": "static narrow matched-spectrum control",
+  "definition": "uniform mean over t=0,...,999 of individually coefficient-mean-normalized moving narrow weights",
+  "source_radial_power": "configs/cifar10_50k_radial_power.csv",
+  "source_radial_power_sha256": "848d6d53c71b528c314c8b053ece94a4c7afdab7eed531186ba54bd2fb890cd8",
+  "static_control_csv": "configs/cifar10_50k_static_narrow_matched.csv",
+  "static_control_csv_sha256": "1cfe9b52c6b5ef4ae906045fece26e35f2ad978a643c6117f0bba90cd2b03ac5",
+  "slurm_artifact_csv_sha256": "10c0edde4d53d2551cc381445a06e72d0888a1664e35fbaf3d8b5494dce0a795",
+  "serialization_note": "The Slurm artifact used CSV CRLF record terminators; the versioned CSV uses repository-standard LF. Parsed float64 values are exactly equal and are revalidated against the defining marginal in tests.",
+  "tau": 0.6931471805599453,
+  "weight_floor": 0.1,
+  "normalization": "coefficient_mean",
+  "fft_normalization": "ortho",
+  "timestep_distribution": "uniform discrete over t=0,...,999",
+  "schedule": {
+    "implementation_dtype": "torch.float32",
+    "num_steps": 1000,
+    "beta_start": 0.0001,
+    "beta_end": 0.02,
+    "sigma_eff": "sqrt((1-alpha_bar)/alpha_bar)"
+  },
+  "full_fft_coefficient_count": 1024,
+  "static_weight_minimum": 0.829921119587747,
+  "static_weight_maximum": 2.2656612647362406,
+  "materialization_job_id": "17380029",
+  "materialization_commit": "e83b8ae9aafb76f58c953ca6a00cd6519a3a787a",
+  "materialization_status": "completed",
+  "checks": {
+    "timestep_invariance_exact": true,
+    "coefficient_mean": 1.0,
+    "coefficient_mean_absolute_error": 0.0,
+    "serialized_marginal_max_absolute_error": 0.0,
+    "serialized_marginal_exact": true,
+    "full_fft_multiplicity_exact": true
+  }
+}

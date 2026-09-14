@@ -37,7 +37,11 @@
       "loss": "static coefficient-weighted Fourier epsilon MSE",
       "matching_target": "boundary_narrow",
       "definition": "bar_w_r = mean over all 1000 uniformly weighted DDPM timesteps of the coefficient-mean-normalized boundary_narrow w_t,r",
-      "time_dependent": false
+      "time_dependent": false,
+      "status": "materialized_and_validated",
+      "path": "configs/cifar10_50k_static_narrow_matched.csv",
+      "validation_job_id": "17380029",
+      "validation_commit": "e83b8ae9aafb76f58c953ca6a00cd6519a3a787a"
     }
   },
   "paired_runs": [
