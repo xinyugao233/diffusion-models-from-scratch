@@ -35,9 +35,10 @@ class SpectralBoundaryConfig:
             raise ValueError("Only the E006-compatible 'ortho' FFT is supported.")
         if (self.sigma_min is None) != (self.sigma_max is None):
             raise ValueError("sigma_min and sigma_max must be set together.")
-        if self.sigma_min is not None:
-            if not 0.0 < self.sigma_min <= self.sigma_max:
-                raise ValueError("Expected 0 < sigma_min <= sigma_max.")
+        if self.sigma_min is not None and not (
+            0.0 < self.sigma_min <= self.sigma_max
+        ):
+            raise ValueError("Expected 0 < sigma_min <= sigma_max.")
 
 
 @dataclass(frozen=True)

@@ -341,17 +341,17 @@ def main() -> int:
         )
         segment_examples += images.shape[0]
         elapsed = time.perf_counter() - start_time
-        metric_values: dict[str, float | str] = dict(
-            loss=metrics.loss,
-            gradient_norm=metrics.gradient_norm,
-            clipped_gradient_norm=metrics.clipped_gradient_norm,
-            ema_num_updates=metrics.ema_num_updates,
-            elapsed_seconds=elapsed,
-            steps_per_second=batch_index / elapsed,
-            examples_per_second=segment_examples / elapsed,
-            peak_memory_allocated_bytes=torch.cuda.max_memory_allocated(device),
-            peak_memory_reserved_bytes=torch.cuda.max_memory_reserved(device),
-        )
+        metric_values: dict[str, float | str] = {
+            "loss": metrics.loss,
+            "gradient_norm": metrics.gradient_norm,
+            "clipped_gradient_norm": metrics.clipped_gradient_norm,
+            "ema_num_updates": metrics.ema_num_updates,
+            "elapsed_seconds": elapsed,
+            "steps_per_second": batch_index / elapsed,
+            "examples_per_second": segment_examples / elapsed,
+            "peak_memory_allocated_bytes": torch.cuda.max_memory_allocated(device),
+            "peak_memory_reserved_bytes": torch.cuda.max_memory_reserved(device),
+        }
         if metrics.spectral_boundary is not None:
             diagnostics = metrics.spectral_boundary
             metric_values.update(
