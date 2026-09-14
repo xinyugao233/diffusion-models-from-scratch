@@ -19,7 +19,6 @@ from diffusion_models.spectral_boundary import (
     weighted_spectral_loss,
 )
 
-
 POWER_PATH = (
     Path(__file__).parents[1] / "configs" / "cifar10_e006_radial_power.csv"
 )
