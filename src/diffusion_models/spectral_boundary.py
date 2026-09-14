@@ -48,7 +48,9 @@ class StaticSpectralConfig:
 
     def __post_init__(self) -> None:
         if self.weights.ndim != 1 or not self.weights.is_floating_point():
-            raise ValueError("Static weights must be a one-dimensional floating tensor.")
+            raise ValueError(
+                "Static weights must be a one-dimensional floating tensor."
+            )
         if not torch.isfinite(self.weights).all() or torch.any(self.weights <= 0.0):
             raise ValueError("Every static weight must be finite and positive.")
         if self.fft_normalization != "ortho":
@@ -123,9 +125,7 @@ def load_static_spectral_control(
         raise ValueError("Static-control radii must be contiguous and start at zero.")
     radial_power = RadialPower(
         power=torch.tensor([row[1] for row in rows], dtype=torch.float64),
-        coefficient_counts=torch.tensor(
-            [row[2] for row in rows], dtype=torch.float64
-        ),
+        coefficient_counts=torch.tensor([row[2] for row in rows], dtype=torch.float64),
     )
     static_config = StaticSpectralConfig(
         weights=torch.tensor([row[3] for row in rows], dtype=torch.float64)

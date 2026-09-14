@@ -24,9 +24,7 @@ from diffusion_models.spectral_boundary import (
 )
 
 POWER_PATH = Path(__file__).parents[1] / "configs" / "cifar10_e006_radial_power.csv"
-POWER_50K_PATH = (
-    Path(__file__).parents[1] / "configs" / "cifar10_50k_radial_power.csv"
-)
+POWER_50K_PATH = Path(__file__).parents[1] / "configs" / "cifar10_50k_radial_power.csv"
 
 
 class TinyNoisePredictor(nn.Module):

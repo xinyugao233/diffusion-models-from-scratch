@@ -139,9 +139,7 @@ def production_train_step(
     *,
     generator: torch.Generator,
     max_gradient_norm: float,
-    spectral_boundary: tuple[
-        RadialPower, SpectralBoundaryConfig | StaticSpectralConfig
-    ]
+    spectral_boundary: tuple[RadialPower, SpectralBoundaryConfig | StaticSpectralConfig]
     | None = None,
     event_callback: Callable[[str], None] | None = None,
 ) -> ProductionStepMetrics:
