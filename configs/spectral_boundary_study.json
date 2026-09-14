@@ -1,0 +1,118 @@
+{
+  "study": {
+    "name": "Moving spectral boundary intervention",
+    "status": "preregistered_before_training",
+    "hypotheses": {
+      "H1": "Time-dependent weighting centered at log(P_r / sigma_eff^2) = 0 improves the generative-quality or ordinary-denoising-loss trajectory relative to baseline.",
+      "H2": "Moving-frontier weighting outperforms static weighting with matched marginal frequency emphasis.",
+      "H3": "Moving-frontier weighting changes nearest-neighbor memorization at matched generative quality."
+    }
+  },
+  "spectrum_gate": {
+    "reference": "configs/cifar10_e006_radial_power.csv",
+    "candidate": "radial_power_50k.csv from scripts/compare_cifar10_radial_power.py",
+    "decision": "Use the 50K spectrum if max absolute per-shell relative change exceeds 0.05, more than 0.05 of DDPM timesteps change R_MI, or any DDPM crossing moves by more than one shell; otherwise retain E006-1K.",
+    "status": "pending_slurm_result"
+  },
+  "conditions": {
+    "baseline": {
+      "loss": "ordinary pixel-space epsilon MSE"
+    },
+    "boundary_narrow": {
+      "loss": "coefficient-weighted Fourier epsilon MSE",
+      "tau": 0.6931471805599453,
+      "weight_floor": 0.1,
+      "sigma_gate": null
+    },
+    "boundary_broad": {
+      "loss": "coefficient-weighted Fourier epsilon MSE",
+      "tau": 1.3862943611198906,
+      "weight_floor": 0.1,
+      "sigma_gate": null
+    },
+    "static_matched_narrow": {
+      "loss": "static coefficient-weighted Fourier epsilon MSE",
+      "matching_target": "boundary_narrow",
+      "definition": "bar_w_r = mean over all 1000 uniformly weighted DDPM timesteps of the coefficient-mean-normalized boundary_narrow w_t,r",
+      "time_dependent": false
+    }
+  },
+  "paired_runs": [
+    {
+      "pair": 0,
+      "initialization_seed": 101,
+      "data_order_seed": 103,
+      "training_noise_seed": 107
+    },
+    {
+      "pair": 1,
+      "initialization_seed": 1101,
+      "data_order_seed": 1103,
+      "training_noise_seed": 1107
+    },
+    {
+      "pair": 2,
+      "initialization_seed": 2101,
+      "data_order_seed": 2103,
+      "training_noise_seed": 2107
+    }
+  ],
+  "rng_isolation": {
+    "requirement": "Within each pair, all conditions use identical initialization, minibatch order, timesteps, and epsilon draws.",
+    "evaluation_seed": 3109,
+    "heldout_denoising_seed": 3119,
+    "require_separate_generators": true
+  },
+  "training": {
+    "dataset": "CIFAR-10 train 50K in model space [-1, 1]",
+    "timestep_distribution": "uniform discrete over t=0,...,999",
+    "primary_range": "full DDPM schedule; no wild-middle gating",
+    "stages": [20000, 50000],
+    "checkpoint_steps": [0, 5000, 10000, 15000, 20000, 30000, 40000, 50000],
+    "continuation_rule": "After every condition reaches 20K, continue every paired run unless a run has nonfinite values, a process failure, ordinary held-out epsilon MSE greater than 2x its paired baseline, or KID greater than 2x its paired baseline at 20K. Do not select a winner at 20K."
+  },
+  "heldout_denoising": {
+    "split": "CIFAR-10 test",
+    "example_indices": "0:1024",
+    "fixed_timestep_assignment": "stratified across 0:999 and materialized before training",
+    "fixed_noise": true,
+    "metric": "ordinary unweighted epsilon MSE",
+    "evaluation_steps": [0, 5000, 10000, 15000, 20000, 30000, 40000, 50000]
+  },
+  "generative_quality": {
+    "model": "EMA",
+    "sampler": "DDIM, 50 steps, eta=0",
+    "real_reference": "all 10K CIFAR-10 test images",
+    "kid": {
+      "generated_images": 10000,
+      "steps": [0, 5000, 10000, 15000, 20000, 30000, 40000, 50000]
+    },
+    "fid": {
+      "generated_images": 50000,
+      "steps": [50000]
+    },
+    "report_axes": ["optimizer_steps", "training_images_seen", "wall_clock_seconds"],
+    "timing": "median optimizer-step duration after warmup, excluding evaluation"
+  },
+  "memorization": {
+    "evaluator": "exact pinned CIFAR-1K Fourier nearest-neighbor evaluator; identity and thresholds must be recorded before training",
+    "fixed_sampling_seeds": true,
+    "steps": [5000, 10000, 20000, 30000, 40000, 50000],
+    "comparison": "memorization at matched generative quality"
+  },
+  "reporting": {
+    "always_log": [
+      "ordinary_pixel_epsilon_mse",
+      "intervention_loss",
+      "images_seen",
+      "optimizer_step",
+      "training_wall_clock_seconds",
+      "median_step_time_after_warmup"
+    ],
+    "paired_primary_contrasts": [
+      "boundary_narrow - baseline",
+      "boundary_broad - baseline",
+      "boundary_narrow - static_matched_narrow"
+    ]
+  }
+}

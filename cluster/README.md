@@ -55,3 +55,23 @@ sbatch --export=ALL,RUN_COMMIT="$run_commit" \
 The launcher refuses an existing `EXP005/try01`, verifies the exact clean run
 commit, copies the checkpoint to job-local scratch, and stages the small result
 bundle to `~/data/diffusion-models-from-scratch/exp005-ddim-comparison/try01`.
+
+## Spectral-boundary 50K spectrum gate
+
+Before intervention training, recompute the exact E006 radial statistic over
+all 50,000 CIFAR-10 training images. The job refuses non-Slurm execution and
+existing attempt directories:
+
+```bash
+run_commit=$(git rev-parse HEAD)
+sbatch --export=ALL,RUN_COMMIT="$run_commit",ATTEMPT=try01 \
+  --output="$log_root/spectrum-50k-%j.out" \
+  cluster/sbatch_spectrum_50k.sh
+```
+
+Results are staged to
+`~/data/diffusion-models-from-scratch/spectrum-50k/try01`. The predeclared
+materiality rule uses the 50K spectrum for intervention training when the
+maximum absolute per-shell relative difference from E006 exceeds 5%, more than
+5% of DDPM timesteps change crossing shell, or any crossing moves by more than
+one shell. Otherwise the E006 first-1K spectrum remains frozen.
