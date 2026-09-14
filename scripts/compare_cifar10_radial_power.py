@@ -291,9 +291,7 @@ def main() -> None:
 
     max_index = int(np.argmax(np.abs(relative)))
     changed = ddpm_1k != ddpm_50k
-    shell_material = bool(
-        np.max(np.abs(relative)) > args.material_relative_threshold
-    )
+    shell_material = bool(np.max(np.abs(relative)) > args.material_relative_threshold)
     crossing_material = bool(
         changed.mean() > args.material_relative_threshold
         or np.max(np.abs(ddpm_50k - ddpm_1k)) > 1
