@@ -7,7 +7,6 @@ import argparse
 import csv
 import hashlib
 import json
-import math
 import os
 import pickle
 import platform
@@ -16,7 +15,6 @@ import time
 from pathlib import Path
 
 import numpy as np
-
 
 IMAGE_SIZE = 32
 CHANNELS = 3

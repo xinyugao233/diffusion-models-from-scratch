@@ -5,7 +5,6 @@ from pathlib import Path
 
 import numpy as np
 
-
 SCRIPT = Path(__file__).parents[1] / "scripts" / "compare_cifar10_radial_power.py"
 SPEC = importlib.util.spec_from_file_location("compare_cifar10_radial_power", SCRIPT)
 assert SPEC is not None and SPEC.loader is not None
