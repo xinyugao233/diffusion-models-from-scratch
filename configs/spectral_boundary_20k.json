@@ -17,7 +17,9 @@
   },
   "evaluation": {
     "asset_path": "/home/xggh8/data/diffusion-models-from-scratch/spectral-boundary-study/evaluation-freeze/try01/heldout_denoising.pt",
-    "asset_sha256": "PENDING_MATERIALIZATION",
+    "asset_sha256": "cc9ff0b8d519ef230ac1460e576b2f8f01be5523272f7cfc4d8fc2f248806e73",
+    "asset_materialization_commit": "45a143e95b3d9d4ec89e9b0876c9e2bead648f34",
+    "asset_materialization_job_id": "17478640",
     "heldout_denoising": {
       "example_count": 1024,
       "example_indices": "CIFAR-10 test indices 0 through 1023 inclusive",
@@ -66,7 +68,14 @@
       "criterion": "d1 < d2 / 3"
     },
     "inception_weights_path": "/home/xggh8/data/diffusion-models-from-scratch/eval-assets/torch-fidelity-0.4.0/weights-inception-2015-12-05-6726825d.pth",
-    "inception_weights_sha256": "PENDING_SETUP",
+    "inception_weights_sha256": "6726825d0af5f729cebd5821db510b11b1cfad8faad88a03f1befd49fb9129b2",
+    "evaluation_dependencies": {
+      "setup_commit": "45a143e95b3d9d4ec89e9b0876c9e2bead648f34",
+      "setup_job_id": "17478639",
+      "torch_fidelity": "0.4.0",
+      "scipy": "1.16.2",
+      "tqdm": "4.67.1"
+    },
     "clip_x_start": true,
     "fixed_initial_noise_seeds": [],
     "reverse_noise_seed": 40000,
