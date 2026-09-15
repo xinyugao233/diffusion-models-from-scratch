@@ -45,6 +45,7 @@ from diffusion_models.full_training import (
     fixed_initial_noise,
     model_tensors_are_finite,
     production_train_step,
+    resolve_study_configuration,
     sampling_steps,
 )
 from diffusion_models.models import (
@@ -137,6 +138,7 @@ __all__ = [
     "q_sample",
     "radial_power_map",
     "radial_shell_indices",
+    "resolve_study_configuration",
     "restore_rng_state",
     "sample_epsilon_training_batch",
     "sampling_steps",

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import copy
 import json
 import math
 from collections.abc import Callable, Iterator, Mapping, Sequence
@@ -205,8 +206,8 @@ def checkpoint_steps(
         if cadence <= 0:
             raise ValueError("checkpoint_every must be positive.")
         steps = set(range(cadence, maximum + 1, cadence))
-    if not steps or any(step <= 0 or step > maximum for step in steps):
-        raise ValueError("Checkpoint steps must lie in [1, max_steps].")
+    if not steps or any(step < 0 or step > maximum for step in steps):
+        raise ValueError("Checkpoint steps must lie in [0, max_steps].")
     return steps
 
 
@@ -276,3 +277,46 @@ def require_slurm_environment(environment: Mapping[str, str]) -> str:
     if not job_id:
         raise RuntimeError("Refusing to run training outside Slurm.")
     return job_id
+
+
+def resolve_study_configuration(
+    config: Mapping[str, Any],
+    *,
+    condition: str | None,
+    pair: int | None,
+) -> dict[str, Any]:
+    """Resolve one frozen condition/pair without changing shared config input."""
+    resolved = copy.deepcopy(dict(config))
+    conditions = resolved.pop("study_conditions", None)
+    pairs = resolved.pop("paired_runs", None)
+    if conditions is None and pairs is None:
+        if condition is not None or pair is not None:
+            raise ValueError("Condition/pair overrides require a study configuration.")
+        return resolved
+    if not isinstance(conditions, Mapping) or not isinstance(pairs, list):
+        raise TypeError("Study configuration requires conditions and paired runs.")
+    if condition not in conditions or pair is None:
+        raise ValueError("A known condition and pair index are required.")
+    matches = [entry for entry in pairs if int(entry["pair"]) == pair]
+    if len(matches) != 1:
+        raise ValueError(f"Expected exactly one seed record for pair {pair}.")
+    seed_record = matches[0]
+    treatment = conditions[condition]
+    resolved["model"]["initialization_seed"] = int(seed_record["initialization_seed"])
+    resolved["data"]["data_order_seed"] = int(seed_record["data_order_seed"])
+    resolved["training"]["training_noise_seed"] = int(
+        seed_record["training_noise_seed"]
+    )
+    spectral = treatment.get("spectral_boundary_loss")
+    if spectral is None:
+        resolved.pop("spectral_boundary_loss", None)
+    else:
+        resolved["spectral_boundary_loss"] = copy.deepcopy(spectral)
+    resolved["experiment"]["condition"] = condition
+    resolved["experiment"]["pair"] = pair
+    resolved["resolved_study"] = {
+        "condition": condition,
+        "pair": pair,
+        "seeds": copy.deepcopy(seed_record),
+    }
+    return resolved

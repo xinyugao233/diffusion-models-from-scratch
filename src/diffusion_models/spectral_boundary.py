@@ -78,6 +78,7 @@ class SpectralBoundaryDiagnostics:
     mean_weight: Tensor
     maximum_weight: Tensor
     effective_shell_count: Tensor
+    effective_coefficient_count: Tensor
 
 
 def load_radial_power(path: str | Path) -> RadialPower:
@@ -292,6 +293,10 @@ def weighted_spectral_loss(
     effective_shells = shell_weights.sum(dim=1).square() / shell_weights.square().sum(
         dim=1
     )
+    effective_coefficients = residual.shape[1] * (
+        coefficient_weights.sum(dim=(1, 2)).square()
+        / coefficient_weights.square().sum(dim=(1, 2))
+    )
     diagnostics = SpectralBoundaryDiagnostics(
         sigma_mean=sigma.mean(),
         sigma_min=sigma.amin(),
@@ -302,5 +307,6 @@ def weighted_spectral_loss(
         mean_weight=coefficient_weights.mean(),
         maximum_weight=shell_weights.amax(dim=1).mean(),
         effective_shell_count=effective_shells.mean(),
+        effective_coefficient_count=effective_coefficients.mean(),
     )
     return loss, diagnostics

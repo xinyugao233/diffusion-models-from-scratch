@@ -76,7 +76,7 @@
     "primary_range": "full DDPM schedule; no wild-middle gating",
     "stages": [20000, 50000],
     "checkpoint_steps": [0, 5000, 10000, 15000, 20000, 30000, 40000, 50000],
-    "continuation_rule": "After every condition reaches 20K, continue every paired run unless a run has nonfinite values, a process failure, ordinary held-out epsilon MSE greater than 2x its paired baseline, or KID greater than 2x its paired baseline at 20K. Do not select a winner at 20K."
+    "continuation_rule": "Stop after every condition reaches 20K for scientific review. Stop an individual run early only for nonfinite values, clear numerical divergence, checkpoint corruption, or infrastructure failure; observed relative quality is never an early-stop criterion. Do not select a winner at 20K and do not launch 50K continuations automatically."
   },
   "heldout_denoising": {
     "split": "CIFAR-10 test",

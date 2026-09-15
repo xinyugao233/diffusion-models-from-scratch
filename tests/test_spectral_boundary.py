@@ -107,6 +107,10 @@ def test_uniform_boundary_weights_recover_pixel_mse_by_parseval() -> None:
     torch.testing.assert_close(
         diagnostics.mean_weight, torch.ones_like(diagnostics.mean_weight)
     )
+    torch.testing.assert_close(
+        diagnostics.effective_coefficient_count,
+        diagnostics.effective_coefficient_count.new_tensor(3 * 32 * 32),
+    )
 
 
 @pytest.mark.parametrize("tau", [1e-3, 0.25, 1e6])

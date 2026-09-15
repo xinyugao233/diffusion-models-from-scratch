@@ -35,6 +35,7 @@ from diffusion_models.full_training import (
     DeterministicStepBatchSampler,
     require_slurm_environment,
 )
+from diffusion_models.memorization import cifar_pixel_memorization_metrics
 from diffusion_models.models import CIFAR10UNet, UNetConfig, primary_unet_config
 
 
@@ -257,36 +258,6 @@ def fourier_ddim(
     return fourier_channels_to_image(sample)
 
 
-@torch.no_grad()
-def memorization_metrics(samples: Tensor, references: Tensor) -> dict[str, Any]:
-    flat_references = references.flatten(1)
-    nearest_distances = []
-    second_distances = []
-    nearest_indices = []
-    for chunk in samples.split(128):
-        distances = torch.cdist(chunk.flatten(1), flat_references)
-        values, indices = distances.topk(2, largest=False, dim=1)
-        nearest_distances.append(values[:, 0])
-        second_distances.append(values[:, 1])
-        nearest_indices.append(indices[:, 0])
-    d1 = torch.cat(nearest_distances)
-    d2 = torch.cat(second_distances)
-    neighbors = torch.cat(nearest_indices)
-    memorized = d1 < d2 / 3.0
-    memorized_neighbors = neighbors[memorized]
-    counts = torch.bincount(memorized_neighbors, minlength=references.shape[0])
-    return {
-        "sample_count": samples.shape[0],
-        "memorized_count": int(memorized.sum().item()),
-        "memorization_rate": float(memorized.float().mean().item()),
-        "unique_training_neighbors_hit": int((counts > 0).sum().item()),
-        "unique_training_neighbor_fraction": float((counts > 0).float().mean().item()),
-        "maximum_duplicate_count": int(counts.max().item()),
-        "mean_d1": float(d1.mean().item()),
-        "mean_d2": float(d2.mean().item()),
-    }
-
-
 def system_identity(device: torch.device) -> dict[str, Any]:
     properties = torch.cuda.get_device_properties(device)
     return {
@@ -350,7 +321,7 @@ def evaluate(
             batches.append(generated)
         torch.cuda.synchronize(device)
         samples = torch.cat(batches).clamp(-1.0, 1.0)
-        record = memorization_metrics(samples, references)
+        record = cifar_pixel_memorization_metrics(samples, references)
         record["evaluation_seconds"] = time.perf_counter() - start
         record["sample_sha256"] = tensor_sha256(samples)
         result[name] = record

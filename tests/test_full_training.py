@@ -19,6 +19,7 @@ from diffusion_models.full_training import (
     fixed_initial_noise,
     production_train_step,
     require_slurm_environment,
+    resolve_study_configuration,
     sampling_steps,
 )
 from diffusion_models.models import CIFAR10UNet, smoke_unet_config
@@ -108,6 +109,42 @@ def test_checkpoint_and_sampling_cadence() -> None:
     assert checkpoint_steps(gate) == {250, 500}
     assert sampling_steps("full", full, evaluation) == {10_000, 25_000, 50_000}
     assert sampling_steps("gate_b", gate, evaluation) == {500}
+
+
+def test_study_resolution_preserves_pairing_and_condition() -> None:
+    source = {
+        "model": {"initialization_seed": 0},
+        "data": {"data_order_seed": 0},
+        "training": {"training_noise_seed": 0},
+        "experiment": {},
+        "paired_runs": [
+            {
+                "pair": 2,
+                "initialization_seed": 21,
+                "data_order_seed": 22,
+                "training_noise_seed": 23,
+            }
+        ],
+        "study_conditions": {
+            "baseline": {"spectral_boundary_loss": None},
+            "moving": {"spectral_boundary_loss": {"enabled": True}},
+        },
+    }
+    baseline = resolve_study_configuration(source, condition="baseline", pair=2)
+    moving = resolve_study_configuration(source, condition="moving", pair=2)
+
+    assert baseline["model"]["initialization_seed"] == 21
+    assert baseline["data"]["data_order_seed"] == 22
+    assert baseline["training"]["training_noise_seed"] == 23
+    assert "spectral_boundary_loss" not in baseline
+    assert moving["spectral_boundary_loss"] == {"enabled": True}
+    assert "paired_runs" not in moving and "study_conditions" not in moving
+
+
+def test_checkpoint_cadence_accepts_frozen_step_zero() -> None:
+    assert checkpoint_steps(
+        {"max_steps": 20_000, "checkpoint_steps": [0, 5_000, 20_000]}
+    ) == {0, 5_000, 20_000}
 
 
 def test_fixed_initial_noise_preserves_each_seed() -> None:

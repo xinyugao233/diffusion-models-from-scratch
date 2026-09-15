@@ -11,6 +11,7 @@ import math
 import os
 import platform
 import random
+import statistics
 import time
 from pathlib import Path
 from typing import Any
@@ -44,6 +45,7 @@ from diffusion_models.full_training import (
     model_tensors_are_finite,
     production_train_step,
     require_slurm_environment,
+    resolve_study_configuration,
     sampling_steps,
 )
 from diffusion_models.models import CIFAR10UNet, primary_unet_config
@@ -68,6 +70,19 @@ def tensor_sha256(tensor: torch.Tensor) -> str:
     return hashlib.sha256(
         tensor.detach().cpu().contiguous().numpy().tobytes()
     ).hexdigest()
+
+
+def state_dict_sha256(state: dict[str, torch.Tensor]) -> str:
+    digest = hashlib.sha256()
+    for name, tensor in sorted(state.items()):
+        digest.update(name.encode("utf-8"))
+        digest.update(tensor.detach().cpu().contiguous().numpy().tobytes())
+    return digest.hexdigest()
+
+
+def mapping_sha256(value: dict[str, Any]) -> str:
+    payload = json.dumps(value, sort_keys=True, separators=(",", ":")).encode()
+    return hashlib.sha256(payload).hexdigest()
 
 
 def validate_configuration(config: dict[str, Any], stage: str) -> dict[str, Any]:
@@ -199,14 +214,19 @@ def main() -> int:
     job_id = require_slurm_environment(os.environ)
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", required=True)
-    parser.add_argument("--stage", choices=("gate_a", "gate_b", "full"), required=True)
+    parser.add_argument("--stage", required=True)
     parser.add_argument("--output-dir", required=True)
     parser.add_argument("--segment-end", required=True, type=int)
     parser.add_argument("--resume")
+    parser.add_argument("--condition")
+    parser.add_argument("--pair", type=int)
     args = parser.parse_args()
 
     config_path = repository_path(args.config)
-    config = load_json(config_path)
+    source_config = load_json(config_path)
+    config = resolve_study_configuration(
+        source_config, condition=args.condition, pair=args.pair
+    )
     stage_config = validate_configuration(config, args.stage)
     spectral_boundary = load_spectral_boundary_configuration(config)
     maximum_steps = int(stage_config["max_steps"])
@@ -252,6 +272,7 @@ def main() -> int:
         )
 
     model = CIFAR10UNet(primary_unet_config()).to(device)
+    initial_model_sha256 = state_dict_sha256(model.state_dict())
     parameter_count = sum(
         parameter.numel() for parameter in model.parameters() if parameter.requires_grad
     )
@@ -278,7 +299,10 @@ def main() -> int:
     training_generator = torch.Generator(device=device).manual_seed(
         config["training"]["training_noise_seed"]
     )
+    initial_training_generator_sha256 = tensor_sha256(training_generator.get_state())
     checkpoint_configuration = {"config": config, "stage": args.stage}
+    source_configuration_sha256 = sha256_file(config_path)
+    resolved_configuration_sha256 = mapping_sha256(config)
 
     start_step = 0
     resume_metadata = None
@@ -331,13 +355,52 @@ def main() -> int:
     checkpoint_records: list[dict[str, Any]] = []
     sample_records: list[dict[str, Any]] = []
     start_time = time.perf_counter()
+    optimizer_step_times: list[float] = []
+    cumulative_optimizer_seconds = 0.0
     segment_examples = 0
     torch.cuda.reset_peak_memory_stats(device)
+
+    def write_checkpoint(step: int) -> None:
+        checkpoint_path = checkpoint_dir / f"checkpoint_step_{step:06d}.pt"
+        save_training_checkpoint(
+            checkpoint_path,
+            model=model,
+            ema=ema,
+            optimizer=optimizer,
+            global_step=step,
+            configuration=checkpoint_configuration,
+            metadata={
+                "run_commit": git["commit"],
+                "source_configuration_sha256": source_configuration_sha256,
+                "resolved_configuration_sha256": resolved_configuration_sha256,
+                "stage": args.stage,
+                "condition": args.condition,
+                "pair": args.pair,
+                "slurm_job_id": job_id,
+                "dataset_archive_md5": dataset_manifest["archive_md5"],
+                "initial_model_sha256": initial_model_sha256,
+                "initial_training_generator_sha256": initial_training_generator_sha256,
+            },
+            generators={"training": training_generator},
+            cuda_devices=[device.index or 0],
+        )
+        checkpoint_records.append(
+            {
+                "step": step,
+                "path": str(checkpoint_path),
+                "sha256": file_sha256(checkpoint_path),
+            }
+        )
+
+    if start_step == 0 and 0 in due_checkpoints:
+        write_checkpoint(0)
 
     model.train()
     for batch_index, (images, _) in enumerate(loader, start=1):
         step = start_step + batch_index
         images = images.to(device, non_blocking=True)
+        torch.cuda.synchronize(device)
+        optimizer_start = time.perf_counter()
         metrics = production_train_step(
             model,
             optimizer,
@@ -348,14 +411,24 @@ def main() -> int:
             max_gradient_norm=config["training"]["gradient_clip"],
             spectral_boundary=spectral_boundary,
         )
+        torch.cuda.synchronize(device)
+        optimizer_step_seconds = time.perf_counter() - optimizer_start
+        optimizer_step_times.append(optimizer_step_seconds)
+        cumulative_optimizer_seconds += optimizer_step_seconds
         segment_examples += images.shape[0]
         elapsed = time.perf_counter() - start_time
         metric_values: dict[str, float | str] = {
             "loss": metrics.loss,
+            "optimization_loss": metrics.loss,
+            "original_unweighted_epsilon_mse": metrics.unweighted_loss,
             "gradient_norm": metrics.gradient_norm,
             "clipped_gradient_norm": metrics.clipped_gradient_norm,
             "ema_num_updates": metrics.ema_num_updates,
             "elapsed_seconds": elapsed,
+            "training_wall_clock_seconds": elapsed,
+            "optimizer_step_seconds": optimizer_step_seconds,
+            "cumulative_optimizer_seconds": cumulative_optimizer_seconds,
+            "examples_seen": step * config["data"]["batch_size"],
             "steps_per_second": batch_index / elapsed,
             "examples_per_second": segment_examples / elapsed,
             "peak_memory_allocated_bytes": torch.cuda.max_memory_allocated(device),
@@ -385,6 +458,9 @@ def main() -> int:
                 effective_weighted_shell_count=float(
                     diagnostics.effective_shell_count.detach().item()
                 ),
+                effective_weighted_coefficient_count=float(
+                    diagnostics.effective_coefficient_count.detach().item()
+                ),
             )
         logger.log(step, **metric_values)
         if step == 1 or step % 10 == 0 or step == args.segment_end:
@@ -396,31 +472,7 @@ def main() -> int:
             )
 
         if step in due_checkpoints:
-            checkpoint_path = checkpoint_dir / f"checkpoint_step_{step:06d}.pt"
-            save_training_checkpoint(
-                checkpoint_path,
-                model=model,
-                ema=ema,
-                optimizer=optimizer,
-                global_step=step,
-                configuration=checkpoint_configuration,
-                metadata={
-                    "run_commit": git["commit"],
-                    "configuration_sha256": sha256_file(config_path),
-                    "stage": args.stage,
-                    "slurm_job_id": job_id,
-                    "dataset_archive_md5": dataset_manifest["archive_md5"],
-                },
-                generators={"training": training_generator},
-                cuda_devices=[device.index or 0],
-            )
-            checkpoint_records.append(
-                {
-                    "step": step,
-                    "path": str(checkpoint_path),
-                    "sha256": file_sha256(checkpoint_path),
-                }
-            )
+            write_checkpoint(step)
 
         if step in due_samples:
             sample_count = int(stage_config["sample_count"])
@@ -508,6 +560,10 @@ def main() -> int:
             f"Expected {args.segment_end} total loss records, found {len(losses)}."
         )
     system = cuda_identity(device)
+    timing_warmup_steps = int(config["training"].get("timing_warmup_steps", 100))
+    post_warmup_times = optimizer_step_times[timing_warmup_steps:]
+    if not post_warmup_times:
+        post_warmup_times = optimizer_step_times
     summary = {
         "schema_version": 1,
         "experiment": config["experiment"]["name"],
@@ -519,11 +575,22 @@ def main() -> int:
         "submitted_commit": submitted_commit,
         "configuration_path": str(config_path),
         "configuration_sha256": sha256_file(config_path),
+        "resolved_configuration_sha256": resolved_configuration_sha256,
+        "condition": args.condition,
+        "pair": args.pair,
+        "initial_model_sha256": initial_model_sha256,
+        "initial_training_generator_sha256": initial_training_generator_sha256,
         "dataset": dataset_manifest,
         "dataset_size": len(dataset),
         "parameter_count": parameter_count,
         "batch_size": config["data"]["batch_size"],
         "duration_seconds": duration,
+        "optimizer_compute_seconds": cumulative_optimizer_seconds,
+        "timing_warmup_steps_excluded": timing_warmup_steps,
+        "mean_optimizer_step_seconds_after_warmup": statistics.fmean(post_warmup_times),
+        "median_optimizer_step_seconds_after_warmup": statistics.median(
+            post_warmup_times
+        ),
         "segment_examples": segment_examples,
         "steps_per_second": (args.segment_end - start_step) / duration,
         "examples_per_second": segment_examples / duration,

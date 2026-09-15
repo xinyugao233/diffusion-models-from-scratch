@@ -1,0 +1,146 @@
+{
+  "data": {
+    "batch_size": 128,
+    "data_order_seed": 103,
+    "dataset": "CIFAR10",
+    "drop_last": true,
+    "expected_train_size": 50000,
+    "num_workers": 4,
+    "root": "/home/xggh8/datasets/cifar10",
+    "train": true
+  },
+  "diffusion": {
+    "beta_end": 0.02,
+    "beta_start": 0.0001,
+    "num_steps": 1000,
+    "schedule": "linear"
+  },
+  "evaluation": {
+    "asset_path": "/home/xggh8/data/diffusion-models-from-scratch/spectral-boundary-study/evaluation-freeze/try01/heldout_denoising.pt",
+    "asset_sha256": "PENDING_MATERIALIZATION",
+    "heldout_denoising": {
+      "example_count": 1024,
+      "example_indices": "CIFAR-10 test indices 0 through 1023 inclusive",
+      "metric": "ordinary unweighted pixel-space epsilon MSE",
+      "noise_seed": 3119,
+      "timestep_assignment": "floor(i * 1000 / 1024) for i=0,...,1023"
+    },
+    "rng_isolation": "Evaluation runs in separate Slurm processes and never restores or mutates training RNG state.",
+    "sampling": {
+      "checkpoint_seed": 40000,
+      "generated_batch_size": 128,
+      "model": "EMA",
+      "preprocessing": "clamp model samples to [-1,1], map to [0,255], round to nearest integer, uint8 RGB NCHW",
+      "sampler": "DDIM eta=0 with 50 inference steps",
+      "seed_protocol": "Reset one CUDA torch.Generator to 40000 at every checkpoint and draw batches sequentially."
+    },
+    "kid": {
+      "batch_size": 128,
+      "checkpoint_steps": [0, 5000, 10000, 15000, 20000],
+      "feature_extractor": "torch-fidelity 0.4.0 inception-v3-compat",
+      "feature_layer": "2048",
+      "generated_image_count": 10000,
+      "polynomial_coef0": 1.0,
+      "polynomial_degree": 3,
+      "polynomial_gamma": null,
+      "real_reference": "all 10000 canonical CIFAR-10 test images in dataset order",
+      "rng_seed": 2020,
+      "subset_size": 1000,
+      "subsets": 100
+    },
+    "fid": {
+      "batch_size": 128,
+      "checkpoint_steps": [50000],
+      "feature_extractor": "torch-fidelity 0.4.0 inception-v3-compat",
+      "feature_layer": "2048",
+      "generated_image_count": 50000,
+      "real_reference": "all 10000 canonical CIFAR-10 test images in dataset order",
+      "status_at_20k": "not scheduled by frozen protocol"
+    },
+    "memorization": {
+      "checkpoint_steps": [0, 5000, 10000, 15000, 20000],
+      "generated_image_count": 1024,
+      "reference": "canonical CIFAR-10 training indices 0 through 999 in model space [-1,1]",
+      "distance": "Euclidean pixel distance after flattening",
+      "chunk_size": 128,
+      "criterion": "d1 < d2 / 3"
+    },
+    "inception_weights_path": "/home/xggh8/data/diffusion-models-from-scratch/eval-assets/torch-fidelity-0.4.0/weights-inception-2015-12-05-6726825d.pth",
+    "inception_weights_sha256": "PENDING_SETUP",
+    "clip_x_start": true,
+    "fixed_initial_noise_seeds": [],
+    "reverse_noise_seed": 40000,
+    "sample_steps": []
+  },
+  "experiment": {
+    "baseline_commit": "706103861c7d12ff3cb7dee037b6a10514b46b5e",
+    "name": "Moving spectral-boundary CIFAR-10 paired 20K study",
+    "try": "try01"
+  },
+  "model": {
+    "configuration": "primary_unet",
+    "expected_parameter_count": 12852547,
+    "initialization_seed": 101
+  },
+  "stages": {
+    "stage_20k": {
+      "checkpoint_steps": [0, 5000, 10000, 15000, 20000],
+      "max_steps": 20000,
+      "sample_count": 0
+    }
+  },
+  "training": {
+    "catastrophic_failure_only": ["NaN/Inf", "clear numerical divergence", "checkpoint corruption", "infrastructure failure"],
+    "deterministic_algorithms": true,
+    "ema_decay": 0.9999,
+    "gradient_clip": 1.0,
+    "optimizer": {
+      "betas": [0.9, 0.999],
+      "eps": 1e-08,
+      "learning_rate": 0.0002,
+      "name": "AdamW",
+      "weight_decay": 0.0
+    },
+    "precision": "float32",
+    "timing_method": "CUDA-synchronized optimizer-step duration; report mean and median after excluding the first 100 steps. Cumulative training wall clock includes data loading and excludes checkpoint evaluation, which runs separately.",
+    "timing_warmup_steps": 100,
+    "training_noise_seed": 107
+  },
+  "paired_runs": [
+    {"pair": 0, "initialization_seed": 101, "data_order_seed": 103, "training_noise_seed": 107},
+    {"pair": 1, "initialization_seed": 1101, "data_order_seed": 1103, "training_noise_seed": 1107},
+    {"pair": 2, "initialization_seed": 2101, "data_order_seed": 2103, "training_noise_seed": 2107}
+  ],
+  "study_conditions": {
+    "baseline": {"spectral_boundary_loss": null},
+    "moving_narrow": {
+      "spectral_boundary_loss": {
+        "enabled": true,
+        "mode": "moving",
+        "radial_power_path": "configs/cifar10_50k_radial_power.csv",
+        "tau": 0.6931471805599453,
+        "weight_floor": 0.1,
+        "normalization": "coefficient_mean_one",
+        "fft_normalization": "ortho"
+      }
+    },
+    "moving_broad": {
+      "spectral_boundary_loss": {
+        "enabled": true,
+        "mode": "moving",
+        "radial_power_path": "configs/cifar10_50k_radial_power.csv",
+        "tau": 1.3862943611198906,
+        "weight_floor": 0.1,
+        "normalization": "coefficient_mean_one",
+        "fft_normalization": "ortho"
+      }
+    },
+    "static_matched": {
+      "spectral_boundary_loss": {
+        "enabled": true,
+        "mode": "static",
+        "static_control_path": "configs/cifar10_50k_static_narrow_matched.csv"
+      }
+    }
+  }
+}
