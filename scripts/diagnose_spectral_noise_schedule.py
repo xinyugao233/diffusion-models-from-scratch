@@ -10,9 +10,9 @@ import json
 import os
 from pathlib import Path
 
-import matplotlib.pyplot as plt
 import torch
 from _experiment_utils import git_identity, load_json, repository_path
+from PIL import Image, ImageDraw
 
 from diffusion_models.diffusion import make_linear_ddpm_schedule
 from diffusion_models.full_training import require_slurm_environment
@@ -25,6 +25,52 @@ from diffusion_models.spectral_noise import (
 
 def sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def line_plot(
+    path: Path,
+    title: str,
+    series: list[tuple[str, list[float]]],
+    *,
+    x_label: str,
+    y_label: str,
+) -> None:
+    """Render a dependency-light diagnostic line plot with Pillow."""
+    width, height = 1200, 700
+    left, right, top, bottom = 100, 30, 70, 80
+    image = Image.new("RGB", (width, height), "white")
+    draw = ImageDraw.Draw(image)
+    draw.text((left, 20), title, fill="black")
+    draw.text((width // 2 - 50, height - 35), x_label, fill="black")
+    draw.text((10, height // 2), y_label, fill="black")
+    draw.line((left, top, left, height - bottom), fill="black", width=2)
+    draw.line(
+        (left, height - bottom, width - right, height - bottom), fill="black", width=2
+    )
+    all_values = [value for _, values in series for value in values]
+    minimum, maximum = min(all_values), max(all_values)
+    span = maximum - minimum or 1.0
+    colors = ["#0072B2", "#D55E00", "#009E73", "#CC79A7", "#000000"]
+    for index, (label, values) in enumerate(series):
+        color = colors[index % len(colors)]
+        points = []
+        for x_index, value in enumerate(values):
+            x = left + x_index * (width - left - right) / max(1, len(values) - 1)
+            y = height - bottom - (value - minimum) * (height - top - bottom) / span
+            points.append((x, y))
+        draw.line(points, fill=color, width=3)
+        legend_y = top + 22 * index
+        draw.line((width - 250, legend_y, width - 215, legend_y), fill=color, width=3)
+        draw.text((width - 205, legend_y - 7), label, fill="black")
+    draw.text((left, height - bottom + 10), "0", fill="black")
+    draw.text(
+        (width - right - 35, height - bottom + 10),
+        str(len(series[0][1]) - 1),
+        fill="black",
+    )
+    draw.text((left - 85, top), f"{maximum:.3g}", fill="black")
+    draw.text((left - 85, height - bottom - 10), f"{minimum:.3g}", fill="black")
+    image.save(path)
 
 
 def main() -> int:
@@ -105,37 +151,53 @@ def main() -> int:
                 int(index) for index in torch.where(literal_peak == 999)[0]
             ],
         }
-        figure, axes = plt.subplots(3, 1, figsize=(10, 12), constrained_layout=True)
-        for radius in representative:
-            axes[0].plot(corrected.hazards[:, radius], label=f"r={radius}")
-            axes[1].plot(corrected.betas[:, radius], label=f"r={radius}")
-            axes[2].plot(corrected.alpha_bars[:, radius], label=f"r={radius}")
-        axes[0].plot(-torch.log(baseline.alphas), "k--", label="baseline")
-        axes[1].plot(baseline.betas, "k--", label="baseline")
-        axes[2].plot(baseline.alpha_bars, "k--", label="baseline")
-        axes[0].set_title("Incremental hazard")
-        axes[1].set_title("Beta")
-        axes[2].set_title("Cumulative alpha bar")
-        for axis in axes:
-            axis.set_xlabel("code timestep")
-            axis.legend(ncol=3)
-        figure.savefig(output / f"{name}_schedule.png", dpi=160)
-        plt.close(figure)
-
-        figure, axis = plt.subplots(figsize=(10, 6), constrained_layout=True)
-        for timestep in (0, 50, 250, 500, 999):
-            axis.plot(
-                range(corrected.num_shells),
-                corrected.hazards[timestep],
-                marker="o",
-                label=f"t={timestep}",
-            )
-        axis.set_xlabel("radial shell")
-        axis.set_ylabel("incremental hazard")
-        axis.set_title(f"Radial corruption profile: {name}")
-        axis.legend()
-        figure.savefig(output / f"{name}_radial_profiles.png", dpi=160)
-        plt.close(figure)
+        common_series = [
+            (f"r={radius}", corrected.hazards[:, radius].tolist())
+            for radius in representative
+        ]
+        line_plot(
+            output / f"{name}_hazard.png",
+            f"Incremental hazard: {name}",
+            [*common_series, ("baseline", (-torch.log(baseline.alphas)).tolist())],
+            x_label="code timestep",
+            y_label="hazard",
+        )
+        line_plot(
+            output / f"{name}_beta.png",
+            f"Beta: {name}",
+            [
+                *[
+                    (f"r={radius}", corrected.betas[:, radius].tolist())
+                    for radius in representative
+                ],
+                ("baseline", baseline.betas.tolist()),
+            ],
+            x_label="code timestep",
+            y_label="beta",
+        )
+        line_plot(
+            output / f"{name}_alpha_bar.png",
+            f"Cumulative alpha bar: {name}",
+            [
+                *[
+                    (f"r={radius}", corrected.alpha_bars[:, radius].tolist())
+                    for radius in representative
+                ],
+                ("baseline", baseline.alpha_bars.tolist()),
+            ],
+            x_label="code timestep",
+            y_label="alpha bar",
+        )
+        line_plot(
+            output / f"{name}_radial_profiles.png",
+            f"Radial corruption profile: {name}",
+            [
+                (f"t={timestep}", corrected.hazards[timestep].tolist())
+                for timestep in (0, 50, 250, 500, 999)
+            ],
+            x_label="radial shell",
+            y_label="hazard",
+        )
 
     table = output / "shell_schedule_diagnostics.csv"
     with table.open("x", newline="", encoding="utf-8") as handle:
