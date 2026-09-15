@@ -1,0 +1,56 @@
+{
+  "experiment": {
+    "name": "Spectral-boundary weighted-noise engineering smoke",
+    "try": "try01",
+    "source_commit": "0ceccf766b71e2fe23056a866ea981a2edcca08f"
+  },
+  "data": {
+    "root": "/home/xggh8/datasets/cifar10",
+    "expected_train_size": 50000,
+    "batch_size": 128,
+    "num_workers": 4,
+    "data_order_seed": 103
+  },
+  "model": {
+    "initialization_seed": 101,
+    "expected_parameter_count": 12852547
+  },
+  "diffusion": {
+    "num_steps": 1000,
+    "beta_start": 0.0001,
+    "beta_end": 0.02,
+    "schedule": "linear"
+  },
+  "training": {
+    "steps": 100,
+    "training_noise_seed": 107,
+    "ema_decay": 0.9999,
+    "gradient_clip": 1.0,
+    "timing_warmup_steps": 10,
+    "optimizer": {
+      "name": "AdamW",
+      "learning_rate": 0.0002,
+      "betas": [0.9, 0.999],
+      "eps": 1e-08,
+      "weight_decay": 0.0
+    }
+  },
+  "spectrum": "configs/cifar10_50k_radial_power.csv",
+  "weighted_noise": {
+    "allocation": "boundary_density",
+    "weight_floor": 0.1,
+    "rho": 1.0,
+    "fft_normalization": "ortho"
+  },
+  "conditions": {
+    "noise_baseline": {"enabled": false},
+    "noise_moving_narrow": {"enabled": true, "tau": 0.6931471805599453},
+    "noise_moving_broad": {"enabled": true, "tau": 1.3862943611198906}
+  },
+  "sampling": {
+    "count": 4,
+    "seed": 40000,
+    "ancestral_steps": 1000,
+    "clip_x_start": true
+  }
+}
