@@ -97,6 +97,22 @@ def test_schedule_ranges_monotonicity_terminal_equality_and_finiteness() -> None
         )
 
 
+def test_float32_baseline_terminal_attenuation_is_preserved() -> None:
+    baseline = make_linear_ddpm_schedule(dtype=torch.float32)
+    schedule = build_spectral_noise_schedule(
+        baseline,
+        load_radial_power(POWER_PATH),
+        SpectralNoiseConfig(tau=math.log(2), weight_floor=0.1, rho=1.0),
+    )
+
+    torch.testing.assert_close(
+        schedule.alpha_bars[-1],
+        baseline.alpha_bars[-1].double().expand(schedule.num_shells),
+        rtol=1e-12,
+        atol=1e-15,
+    )
+
+
 def test_corrected_hazard_peaks_at_boundary_but_literal_proposal_does_not() -> None:
     corrected = make_schedule()
     literal = make_schedule(allocation="baseline_reweighted")

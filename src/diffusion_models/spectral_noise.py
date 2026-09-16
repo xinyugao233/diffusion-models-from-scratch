@@ -94,7 +94,10 @@ def build_spectral_noise_schedule(
     base_alpha = baseline.alphas.to(dtype=dtype)
     base_alpha_bar = baseline.alpha_bars.to(dtype=dtype)
     base_hazard = -torch.log(base_alpha)
-    total_hazard = base_hazard.sum()
+    # Match the baseline's stored terminal attenuation.  In float32, deriving
+    # this from the individual alphas can differ from alpha_bars[-1] because
+    # the baseline cumulative product and the float64 log-sum round differently.
+    total_hazard = -torch.log(base_alpha_bar[-1])
     sigma_squared = (1.0 - base_alpha_bar) / base_alpha_bar
     power = radial_power.power.to(device=device, dtype=dtype)
     log_distance = torch.log(power)[None, :] - torch.log(sigma_squared)[:, None]
