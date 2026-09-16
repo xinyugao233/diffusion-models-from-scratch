@@ -129,7 +129,7 @@
         "radial_power_path": "configs/cifar10_50k_radial_power.csv",
         "tau": 0.6931471805599453,
         "weight_floor": 0.1,
-        "normalization": "coefficient_mean_one",
+        "normalization": "coefficient_mean",
         "fft_normalization": "ortho"
       }
     },
@@ -140,7 +140,7 @@
         "radial_power_path": "configs/cifar10_50k_radial_power.csv",
         "tau": 1.3862943611198906,
         "weight_floor": 0.1,
-        "normalization": "coefficient_mean_one",
+        "normalization": "coefficient_mean",
         "fft_normalization": "ortho"
       }
     },

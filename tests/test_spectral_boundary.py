@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import math
 from pathlib import Path
 
@@ -29,6 +30,9 @@ POWER_50K_PATH = Path(__file__).parents[1] / "configs" / "cifar10_50k_radial_pow
 STATIC_50K_PATH = (
     Path(__file__).parents[1] / "configs" / "cifar10_50k_static_narrow_matched.csv"
 )
+STUDY_20K_CONFIG_PATH = (
+    Path(__file__).parents[1] / "configs" / "spectral_boundary_20k.json"
+)
 
 
 class TinyNoisePredictor(nn.Module):
@@ -38,6 +42,20 @@ class TinyNoisePredictor(nn.Module):
 
     def forward(self, image: torch.Tensor, timesteps: torch.Tensor) -> torch.Tensor:
         return self.convolution(image) + timesteps[:, None, None, None] / 1000.0
+
+
+def test_frozen_20k_moving_conditions_use_supported_normalization() -> None:
+    study = json.loads(STUDY_20K_CONFIG_PATH.read_text(encoding="utf-8"))
+
+    for condition in ("moving_narrow", "moving_broad"):
+        values = study["study_conditions"][condition]["spectral_boundary_loss"]
+        config = SpectralBoundaryConfig(
+            tau=values["tau"],
+            weight_floor=values["weight_floor"],
+            normalization=values["normalization"],
+            fft_normalization=values["fft_normalization"],
+        )
+        assert config.normalization == "coefficient_mean"
 
 
 def test_e006_power_matches_the_full_fft_shell_grid() -> None:
