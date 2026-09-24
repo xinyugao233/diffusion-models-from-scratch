@@ -1,0 +1,92 @@
+{
+  "experiment": {
+    "name": "Study 2 spectral-boundary weighted-noise paired 10K",
+    "try": "try01",
+    "source_branch": "codex/spectral-boundary-noise"
+  },
+  "data": {
+    "dataset": "CIFAR10",
+    "root": "/home/xggh8/datasets/cifar10",
+    "expected_train_size": 50000,
+    "batch_size": 128,
+    "num_workers": 4,
+    "augmentation": "none",
+    "preprocessing": "tensor then (x-0.5)/0.5"
+  },
+  "model": {
+    "configuration": "primary_unet",
+    "expected_parameter_count": 12852547
+  },
+  "diffusion": {
+    "num_steps": 1000,
+    "beta_start": 0.0001,
+    "beta_end": 0.02,
+    "schedule": "linear"
+  },
+  "training": {
+    "steps": 10000,
+    "checkpoint_steps": [1000, 2000, 5000, 10000],
+    "precision": "float32",
+    "deterministic_algorithms": true,
+    "ema_decay": 0.9999,
+    "gradient_clip": 1.0,
+    "timing_warmup_steps": 100,
+    "optimizer": {
+      "name": "AdamW",
+      "learning_rate": 0.0002,
+      "betas": [0.9, 0.999],
+      "eps": 1e-08,
+      "weight_decay": 0.0
+    }
+  },
+  "spectrum": "configs/cifar10_50k_radial_power.csv",
+  "weighted_noise": {
+    "allocation": "boundary_density",
+    "weight_floor": 0.1,
+    "rho": 1.0,
+    "fft_normalization": "ortho"
+  },
+  "study_conditions": {
+    "baseline": {"enabled": false, "tau": null},
+    "moving_narrow": {"enabled": true, "tau": 0.6931471805599453},
+    "moving_broad": {"enabled": true, "tau": 1.3862943611198906}
+  },
+  "paired_seeds": [
+    {"seed": 0, "initialization_seed": 101, "data_order_seed": 103, "training_noise_seed": 107},
+    {"seed": 1, "initialization_seed": 1101, "data_order_seed": 1103, "training_noise_seed": 1107},
+    {"seed": 2, "initialization_seed": 2101, "data_order_seed": 2103, "training_noise_seed": 2107}
+  ],
+  "evaluation": {
+    "checkpoint_step": 10000,
+    "asset_path": "/home/xggh8/data/diffusion-models-from-scratch/spectral-boundary-study/evaluation-freeze/try01/heldout_denoising.pt",
+    "asset_sha256": "cc9ff0b8d519ef230ac1460e576b2f8f01be5523272f7cfc4d8fc2f248806e73",
+    "heldout_example_count": 1024,
+    "batch_size": 128,
+    "protocols": ["common_baseline", "native"],
+    "sampling": {
+      "sampler": "matched_ancestral_1000_steps",
+      "generated_image_count": 2048,
+      "generated_batch_size": 128,
+      "seed": 40000,
+      "clip_x_start": true
+    },
+    "kid": {
+      "feature_extractor": "torch-fidelity 0.4.0 inception-v3-compat",
+      "feature_layer": "2048",
+      "batch_size": 128,
+      "subsets": 50,
+      "subset_size": 1000,
+      "polynomial_degree": 3,
+      "polynomial_gamma": null,
+      "polynomial_coef0": 1.0,
+      "rng_seed": 2020,
+      "real_reference": "all 10000 canonical CIFAR-10 test images"
+    },
+    "fid": {
+      "enabled": false,
+      "reason": "Preliminary 10K evaluation uses 2048 generated images; robust FID is deferred."
+    },
+    "inception_weights_path": "/home/xggh8/data/diffusion-models-from-scratch/eval-assets/torch-fidelity-0.4.0/weights-inception-2015-12-05-6726825d.pth",
+    "inception_weights_sha256": "6726825d0af5f729cebd5821db510b11b1cfad8faad88a03f1befd49fb9129b2"
+  }
+}
