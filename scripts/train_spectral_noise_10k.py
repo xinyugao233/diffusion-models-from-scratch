@@ -240,7 +240,9 @@ def main() -> int:
         pin_memory=True,
         persistent_workers=config["data"]["num_workers"] > 0,
     )
-    due_checkpoints = set(int(step) for step in config["training"]["checkpoint_steps"])
+    due_checkpoints = {
+        int(step) for step in config["training"]["checkpoint_steps"]
+    }
     losses: list[float] = []
     gradients: list[float] = []
     step_times: list[float] = []
