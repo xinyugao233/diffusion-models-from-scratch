@@ -240,9 +240,7 @@ def main() -> int:
         pin_memory=True,
         persistent_workers=config["data"]["num_workers"] > 0,
     )
-    due_checkpoints = {
-        int(step) for step in config["training"]["checkpoint_steps"]
-    }
+    due_checkpoints = {int(step) for step in config["training"]["checkpoint_steps"]}
     losses: list[float] = []
     gradients: list[float] = []
     step_times: list[float] = []
@@ -332,10 +330,9 @@ def main() -> int:
         map_location=device,
         restore_rng=False,
     )
-    checkpoint_reload_exact = (
-        loaded.global_step == args.segment_end
-        and state_sha256(reload_model) == state_sha256(model)
-    )
+    checkpoint_reload_exact = loaded.global_step == args.segment_end and state_sha256(
+        reload_model
+    ) == state_sha256(model)
     if not checkpoint_reload_exact:
         raise RuntimeError("Final checkpoint exact reload validation failed.")
     sample_path = None

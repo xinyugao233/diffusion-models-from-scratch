@@ -26,9 +26,7 @@ def resolve_spectral_noise_study_configuration(
     if len(matches) != 1:
         raise ValueError(f"Expected exactly one paired seed record for seed {seed}.")
     seed_record = matches[0]
-    resolved["model"]["initialization_seed"] = int(
-        seed_record["initialization_seed"]
-    )
+    resolved["model"]["initialization_seed"] = int(seed_record["initialization_seed"])
     resolved["data"]["data_order_seed"] = int(seed_record["data_order_seed"])
     resolved["training"]["training_noise_seed"] = int(
         seed_record["training_noise_seed"]

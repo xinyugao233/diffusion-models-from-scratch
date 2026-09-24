@@ -229,9 +229,7 @@ def main() -> int:
     ema = ExponentialMovingAverage(model, decay=config["training"]["ema_decay"])
     step = int(evaluation["checkpoint_step"])
     checkpoint = (
-        Path(args.training_dir)
-        / "checkpoints"
-        / f"checkpoint_step_{step:06d}.pt"
+        Path(args.training_dir) / "checkpoints" / f"checkpoint_step_{step:06d}.pt"
     )
     checkpoint_configuration = {
         "config": config,

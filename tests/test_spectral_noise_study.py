@@ -38,17 +38,13 @@ def test_resolve_study_configuration_pairs_every_rng_stream() -> None:
     )
     assert baseline["model"] == moving["model"] == {"initialization_seed": 11}
     assert baseline["data"] == moving["data"] == {"data_order_seed": 13}
-    assert baseline["training"] == moving["training"] == {
-        "training_noise_seed": 17
-    }
+    assert baseline["training"] == moving["training"] == {"training_noise_seed": 17}
     assert not baseline["spectral_noise_condition"]["enabled"]
     assert moving["spectral_noise_condition"]["enabled"]
 
 
 def test_full_fft_shell_mse_preserves_global_parseval_average() -> None:
-    residual = torch.randn(
-        (4, 3, 32, 32), generator=torch.Generator().manual_seed(23)
-    )
+    residual = torch.randn((4, 3, 32, 32), generator=torch.Generator().manual_seed(23))
     shell_mse = full_fft_shell_mse(residual, num_shells=23)
     fy = torch.fft.fftfreq(32) * 32
     yy, xx = torch.meshgrid(fy, fy, indexing="ij")
