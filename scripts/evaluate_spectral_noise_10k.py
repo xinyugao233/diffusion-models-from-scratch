@@ -184,7 +184,9 @@ def main() -> int:
     torch.use_deterministic_algorithms(True)
     torch.backends.cudnn.benchmark = False
     output = Path(args.output_dir)
-    output.mkdir(parents=True, exist_ok=False)
+    output.mkdir(parents=True, exist_ok=True)
+    if any(output.iterdir()):
+        raise FileExistsError(f"Refusing to use nonempty output directory: {output}")
     evaluation = config["evaluation"]
     asset_path = Path(evaluation["asset_path"])
     if sha256_file(asset_path) != evaluation["asset_sha256"]:
