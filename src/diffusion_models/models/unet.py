@@ -156,7 +156,7 @@ class TimestepEmbedding(nn.Module):
         )
 
     def forward(self, timesteps: Tensor) -> Tensor:
-        return self.mlp(self.sinusoidal(timesteps))
+        return self.mlp(self.sinusoidal(timesteps).to(dtype=self.mlp[0].weight.dtype))
 
 
 class ResidualBlock(nn.Module):

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Sequence
 from dataclasses import dataclass
+from functools import wraps
 
 import torch
 from torch import Tensor, nn
@@ -14,6 +15,22 @@ from diffusion_models.diffusion.ddpm import (
     predict_x_start_from_noise,
 )
 from diffusion_models.diffusion.schedules import DDPMSchedule, extract
+
+
+def evaluation_mode(function):
+    """Temporarily disable dropout; restore every module's original mode."""
+
+    @wraps(function)
+    def wrapped(model, *args, **kwargs):
+        modes = [(module, module.training) for module in model.modules()]
+        try:
+            model.eval()
+            return function(model, *args, **kwargs)
+        finally:
+            for module, training in modes:
+                module.training = training
+
+    return wrapped
 
 
 @dataclass(frozen=True)
@@ -36,7 +53,10 @@ class ReversePrediction:
 
 @dataclass(frozen=True)
 class SamplingResult:
-    """Final reverse-chain sample and explicitly requested intermediate states."""
+    """Final sample and mathematical states: initial T, clean 0.
+
+    A state at code index s has key s+1. DDIM visits only a subset.
+    """
 
     sample: Tensor
     trajectory: dict[int, Tensor]
@@ -121,6 +141,7 @@ def p_mean_variance(
 
 
 @torch.no_grad()
+@evaluation_mode
 def p_sample(
     model: nn.Module,
     x_t: Tensor,
@@ -168,6 +189,7 @@ def p_sample(
 
 
 @torch.no_grad()
+@evaluation_mode
 def p_sample_loop(
     model: nn.Module,
     schedule: DDPMSchedule,
@@ -186,8 +208,10 @@ def p_sample_loop(
         raise ValueError(f"shape must be positive NCHW dimensions, got {shape}.")
     device = schedule.betas.device if device is None else torch.device(device)
     dtype = schedule.betas.dtype if dtype is None else dtype
-    if not torch.empty((), dtype=dtype).is_floating_point():
-        raise TypeError("Sampling dtype must be floating point.")
+    if dtype not in (torch.float32, torch.float64):
+        raise TypeError("Sampling supports float32 and float64 only.")
+    if any(p.dtype != dtype or p.device != device for p in model.parameters()):
+        raise TypeError("Model parameters must match sampling dtype and device.")
     if device != schedule.betas.device:
         raise ValueError("The sampling device and schedule device must match.")
 

@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "date": "2026-11-02",
+  "items": [
+    {
+      "file": "checkpoint_step_050000.pt",
+      "sha256": "f6b64f7028432ac1690029564610918e68e0c45b5188a97961863eadd79b17b9",
+      "size_bytes": 205996222,
+      "availability": "VERIFIED locally; not published",
+      "redistribution": "Owner decision pending",
+      "role": "original 50K training snapshot",
+      "source": "original run manifest :: checkpoint_step_050000.pt",
+      "expected_sha256": "f6b64f7028432ac1690029564610918e68e0c45b5188a97961863eadd79b17b9"
+    },
+    {
+      "file": "ddim_100_samples.pt",
+      "sha256": "f7e6b545cebd27354b1fe6c39e003701a4c2a09d056396c75e93c57a444e3480",
+      "size_bytes": 198185,
+      "availability": "VERIFIED locally; not published",
+      "redistribution": "Owner decision pending",
+      "role": "historical benchmark sample tensor",
+      "source": "original run manifest :: ddim_100_samples.pt",
+      "expected_sha256": "f7e6b545cebd27354b1fe6c39e003701a4c2a09d056396c75e93c57a444e3480",
+      "run_commit": "20c6ea9fd8b558016a1e995abb7db0ea723962fc"
+    },
+    {
+      "file": "ddim_25_samples.pt",
+      "sha256": "7089404685fd7a199bb4502878349c128ce6d2c00fbdda11cbaa0c7bf4be62d7",
+      "size_bytes": 198185,
+      "availability": "VERIFIED locally; not published",
+      "redistribution": "Owner decision pending",
+      "role": "historical benchmark sample tensor",
+      "source": "original run manifest :: ddim_25_samples.pt",
+      "expected_sha256": "7089404685fd7a199bb4502878349c128ce6d2c00fbdda11cbaa0c7bf4be62d7",
+      "run_commit": "20c6ea9fd8b558016a1e995abb7db0ea723962fc"
+    },
+    {
+      "file": "ddim_50_samples.pt",
+      "sha256": "621e9969b0f389f2fa0138175c5ca513422df5badd5c8113383de61a1e657bc3",
+      "size_bytes": 198185,
+      "availability": "VERIFIED locally; not published",
+      "redistribution": "Owner decision pending",
+      "role": "historical benchmark sample tensor",
+      "source": "original run manifest :: ddim_50_samples.pt",
+      "expected_sha256": "621e9969b0f389f2fa0138175c5ca513422df5badd5c8113383de61a1e657bc3",
+      "run_commit": "20c6ea9fd8b558016a1e995abb7db0ea723962fc"
+    },
+    {
+      "file": "ddpm_1000_samples.pt",
+      "sha256": "65a0f2abc506803a8954504d225c8b1f11b4480e6f0f1ed3ac5447259e5eff96",
+      "size_bytes": 198185,
+      "availability": "VERIFIED locally; not published",
+      "redistribution": "Owner decision pending",
+      "role": "historical benchmark sample tensor",
+      "source": "original run manifest :: ddpm_1000_samples.pt",
+      "expected_sha256": "65a0f2abc506803a8954504d225c8b1f11b4480e6f0f1ed3ac5447259e5eff96",
+      "run_commit": "20c6ea9fd8b558016a1e995abb7db0ea723962fc"
+    },
+    {
+      "file": "ema-50000-v1.pt",
+      "sha256": "dad0aeff2f15ea7766e17f8be3e87104dde26f36aa37054d9cf67c693e1424a2",
+      "size_bytes": 51481283,
+      "availability": "VERIFIED locally; not published",
+      "redistribution": "Owner decision pending",
+      "role": "new versioned EMA-only export",
+      "source": "checkpoint_step_050000.pt",
+      "hash_basis": "new maintenance export"
+    },
+    {
+      "file": "metrics.jsonl",
+      "sha256": "1fbd7e08897f21e0c2fe056bef465e2d11e2a42d106907f04920ec2f0de4896f",
+      "size_bytes": 18019253,
+      "availability": "VERIFIED locally; not published",
+      "redistribution": "Owner decision pending",
+      "role": "original 50000-step training log",
+      "source": "original run manifest :: metrics.jsonl",
+      "expected_sha256": "1fbd7e08897f21e0c2fe056bef465e2d11e2a42d106907f04920ec2f0de4896f",
+      "hash_basis": "current authorized remote bytes; not a newly invented historical manifest hash"
+    }
+  ]
+}

@@ -5,6 +5,14 @@ forward diffusion, a custom time-conditioned U-Net, epsilon-prediction
 training, EMA and exact checkpoint resume, ancestral generation, and
 accelerated deterministic sampling.
 
+**Engineering highlights:** custom 12.85M U-Net; DDPM/DDIM samplers; EMA and
+checkpoint recovery; 83 CPU tests; portable inference exports. In the fixed
+16-seed H100 benchmark, DDIM-50 used 50 calls and took 0.225 s versus
+4.611 s for DDPM-1000 (20.52×); image quality was assessed qualitatively.
+
+[Run the CPU demo](#cpu-quickstart) · [Browse the implementation](#source-reading-guide)
+· [Inspect benchmark evidence](#accelerating-sampling-with-ddim)
+
 ## Generated Samples After 50K Training Steps
 
 The 12.85M-parameter model was trained for 50,000 steps on the full CIFAR-10
@@ -12,6 +20,40 @@ training split. This fixed-seed grid uses the final EMA checkpoint and the
 validated 1,000-step ancestral DDPM sampler.
 
 ![Generated CIFAR-10 samples from the 50K-step EMA checkpoint](Experiments/exp004-full-cifar-10-ddpm-training/try01/figures/full/ema_samples_step_050000.png)
+
+## CPU quickstart
+
+Python 3.13 is the tested local review interpreter. Installation requires network
+access; this synthetic CPU demo needs no dataset, GPU, or checkpoint afterward.
+
+```bash
+python3.13 -m venv .venv
+source .venv/bin/activate
+python -m pip install -c constraints-review.txt -e '.[dev]'
+python scripts/run_synthetic_optimization.py --config configs/public_cpu_demo.json --output-dir "${DEMO_OUTPUT:-outputs/cpu-demo}"
+```
+
+Expected: `passed: true`, 39 epsilon-prediction updates plus one attention
+fixture update (40 total), and `metrics.jsonl` / `summary.json` at the printed
+output location. The optimizer loop took **1.86 s** on the recorded local
+CPU review environment (startup excluded). Repeating into the same directory
+fails before optimization;
+set `DEMO_OUTPUT=outputs/cpu-demo-2` for a new run. Historical configs and tries
+are unchanged. See [measured runtime and checks](docs/maintenance/verification.md).
+
+## Portable trained inference
+
+The original 50K checkpoint was recovered and its recorded SHA-256 verified.
+An EMA-only inference bundle is staged locally for review; **there is no public
+weights download yet**. With an authorized local bundle:
+
+```bash
+python scripts/sample.py --checkpoint /path/to/ema-50000-v1.pt --output-dir outputs/samples-01 --device cpu --sampler ddim --inference-steps 50 --sample-count 16 --seed 0
+```
+
+No Slurm or optimizer state is required for this interface. CUDA is optional.
+Missing/incompatible weights and existing output directories are rejected.
+[Export, model card and availability](docs/maintenance/inference.md).
 
 ## Training Progression
 
@@ -29,7 +71,7 @@ deterministic DDIM (`eta=0`). Every condition started from the same materialized
 batch of 16 initial Gaussian tensors; the four columns below are aligned by
 initial-noise seed.
 
-![Paired DDPM-1000 and DDIM-100, DDIM-50, and DDIM-25 samples](Experiments/exp005-ddim-sampling-speed-quality-comparison/try01/figures/ddpm_ddim_headline.png)
+![Paired DDPM-1000 and DDIM-100, DDIM-50, and DDIM-25 samples](figures/presentation_v2/sampling_comparison.png)
 
 | Sampler | NFE | Median H100 runtime | Speedup |
 |---|---:|---:|---:|
@@ -66,7 +108,7 @@ flowchart TD
     I --> J
 ```
 
-## What I Built
+## What the Project Implements
 
 - A linear DDPM noise schedule and closed-form forward sampler
   `q(x_t | x_0)`.
@@ -100,7 +142,8 @@ L_simple = E[ || epsilon - epsilon_theta(x_t, t) ||^2 ].
 
 DDPM uses the predicted noise to parameterize a stochastic ancestral reverse
 transition. DDIM uses the same prediction function on a shorter trajectory;
-with `eta=0`, its reverse update is deterministic conditional on `x_T`. Full
+with `eta=0`, its reverse update is deterministic conditional on `x_T` and a
+deterministic evaluation-mode denoiser in the stated environment. Full
 derivations are in:
 
 - [DDPM forward process](docs/ddpm_forward_process.md)
@@ -112,25 +155,27 @@ derivations are in:
 Create a local environment and run the inexpensive CPU checks:
 
 ```bash
-python3 -m venv .venv
-.venv/bin/pip install -e '.[dev]'
+python3.13 -m venv .venv
+.venv/bin/pip install -c constraints-review.txt -e '.[dev]'
 .venv/bin/python -m pytest -q
 .venv/bin/ruff check .
 .venv/bin/ruff format --check .
 ```
 
-The current suite contains 72 tests covering data transforms, diffusion
-equations, the U-Net, training, EMA/checkpoint behavior, DDPM/DDIM sampling,
-and experiment-figure regression. CI does not download CIFAR-10, train a model,
-or require a GPU.
+The CPU suite covers data transforms, diffusion equations, U-Net dtype behavior,
+training, EMA/checkpoint restoration, explicit interrupted-log recovery,
+DDPM/DDIM sampling, inference bundles, and figure regression. CI also runs the
+literal installed public-demo entry point; see the
+[hosted PR checks](https://github.com/xinyugao233/diffusion-models-from-scratch/pull/1/checks) for the current branch status. [Verification record](docs/maintenance/verification.md).
 
-Small local demonstrations:
+### Optional CIFAR-10 download examples
+
+These commands download CIFAR-10 unless `--no-download` is given. They write
+to ignored `outputs/` paths and refuse an existing file.
 
 ```bash
-.venv/bin/python scripts/generate_cifar10_grid.py
-.venv/bin/python scripts/generate_forward_process_grid.py
-.venv/bin/python scripts/run_synthetic_optimization.py \
-  --config configs/synthetic_optimization.json
+python scripts/generate_cifar10_grid.py
+python scripts/generate_forward_process_grid.py
 ```
 
 Completed experiment outputs are immutable. Reproducing a scientific run must
@@ -153,6 +198,22 @@ materialized `x_T` batch. The exact implementation passed one in-memory batch
 to every sampler condition; a batch hash was reconstructed locally from the
 frozen generation function and seeds and is documented as derived—not
 run-recorded—evidence.
+
+## Source reading guide
+
+| Topic | Implementation | Contract / checks |
+|---|---|---|
+| Forward diffusion and indexing | [ddpm.py](src/diffusion_models/diffusion/ddpm.py) | [Derivation](docs/ddpm_forward_process.md) |
+| DDIM transitions and captures | [ddim.py](src/diffusion_models/diffusion/ddim.py) | [Analytic tests](tests/test_ddim.py), [state convention](docs/ddim_sampling.md) |
+| Custom 12.85M U-Net | [unet.py](src/diffusion_models/models/unet.py) | [Model tests](tests/test_unet.py) |
+| EMA and interrupted-run recovery | [recovery.py](src/diffusion_models/recovery.py) | [Recovery contract](docs/maintenance/recovery.md), [fixtures](tests/test_recovery_inference.py) |
+| Portable inference | [inference.py](src/diffusion_models/inference.py) | [Release staging](docs/maintenance/inference.md) |
+| Historical experiment evidence | [Experiments](Experiments/) | [Artifact inventory](docs/maintenance/artifacts.md) |
+
+The [maintenance summary](docs/maintenance/verification.md) is the current public
+maintenance status. Root planning notes remain historical research context;
+[archive policy](docs/maintenance/history.md) explains preserved references.
+No new license has been selected; publication rights require owner review.
 
 ## Repository Layout
 

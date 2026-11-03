@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "scope": "Derived presentation only; frozen scientific artifacts unchanged",
+  "sources": {
+    "Experiments/exp005-ddim-sampling-speed-quality-comparison/try01/results/comparison.json": "97aaec5bdb831d11b92ab1621aacdd9ee147b8da68aeb8fb6320cd1c057c4a62"
+  },
+  "assets": {
+    "figures/presentation_v2/sampling_comparison.png": "cca8687f7267636d4684865f385befaa0c9bf29b8a2190cf0ee6218167f61754",
+    "figures/presentation_v2/sampling_latency.png": "a0f814a0515c3dabc1b6fe4e5d28ebf0cd7062db982810e1f4dbda259215afa6"
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "environment": {
+    "python": "3.13.2",
+    "torch": "2.15.0",
+    "torchvision": "0.29.2",
+    "numpy": "2.5.4",
+    "psutil": "7.2.2"
+  },
+  "scope": "Final tested Python source hashes; tests executed on the working tree before documentation commits",
+  "sha256": {
+    "src/diffusion_models/__init__.py": "6c6d4a3b4275ab3fffb2b3f821564761290b3613c25ed1f6e24b8b68a8a2864b",
+    "src/diffusion_models/checkpointing.py": "cf29b4a822ad459b90268e323413d451490eb9c03436be9e4c13648879a7fe68",
+    "src/diffusion_models/data.py": "1caa311476f72223866d7a847a838db7455460126a2ae9635d986aeb78ab899d",
+    "src/diffusion_models/diffusion/__init__.py": "bf7e5f2a9b50f58828ac36223fafae9f8c25508ccab1365cecb163f0b844567e",
+    "src/diffusion_models/diffusion/ddim.py": "f61cf509b047158ad91fd5fcd66f2c706622f1cb0fe83649a7738ba867217714",
+    "src/diffusion_models/diffusion/ddpm.py": "0d9741c907dc441c26c388cc4099a18193b6512b052598bf4d05945e5ea61d1e",
+    "src/diffusion_models/diffusion/sampling.py": "a2b1a07745445ba5e1a61f847b64e26eca4fc2997894e13b103e1c955c5803cb",
+    "src/diffusion_models/diffusion/schedules.py": "f890b44a9a6290005bf73d9c15acf0df150f9ee32388ddc7539cd502c30c0950",
+    "src/diffusion_models/ema.py": "cd6f413894896c9384da8afd4cc7331c4882f9f2f995b70a812430f12a31b075",
+    "src/diffusion_models/full_training.py": "54e6cc9f88c7602ab6f7622d16df6a1d7f235c4d5de4d03003286ccbb1a3f3fd",
+    "src/diffusion_models/inference.py": "bd190e649d1c6403255b4a66e0ada9886f313849392f4a4bbd76a6e44909085e",
+    "src/diffusion_models/models/__init__.py": "20331de4bcf1fc1f36d41e2c677adf5eb06551e67811c695ae0948f781ccb957",
+    "src/diffusion_models/models/unet.py": "c46ca3dfca9ab23dea27bba22ce56792bc5e9e565c8da2e709e3256ada3202b6",
+    "src/diffusion_models/recovery.py": "9e04572c30ba4553543bfd4139aab84097467bca2b1a26aee7bd8a1dd4aebf8f",
+    "src/diffusion_models/training.py": "86d30856931b8e933f02b71a201e10513170d98f15c8bbe1385f6edc20256287",
+    "scripts/_experiment_utils.py": "f2dbc640cf0a6eb93aefad73c399a46d46dd10974d3a4a491d03ec2374d94ae3",
+    "scripts/check_document_links.py": "90a2ceaa0f8d52847da4d1d5f547e26c3a62c38dbae23dfc1d4ff6cbe7e97588",
+    "scripts/export_inference.py": "278cd93447f451a14e8e50835650a80cc5eb6a6966234f45300da8f5a872e0ef",
+    "scripts/generate_cifar10_grid.py": "b88d59a03e80e9ba4445a752d4d3536e6e899114fb893b8ac157b12e397f8097",
+    "scripts/generate_forward_process_grid.py": "51c1f5f2348f9d5c2c0d04ca3a0f920c33944da90d5375a0b52f9de6fc934d59",
+    "scripts/recover_training_run.py": "4c09ed6173d0fa7c28b8c8f3b344bfe27f61106640159de8e997b15a47582a3d",
+    "scripts/render_public_figures.py": "2ba6494ee78e9a10d11412c977120579c7ba29b086bd2160df025aed3c051bb4",
+    "scripts/run_ddim_comparison.py": "f33a7d5a444334a834946a4d3aad2410ece560112277c14b0c013e86fcb8acc0",
+    "scripts/run_overfit_16.py": "d8abf642406ba32be9909b08a812d446e46370ebbc8f2b7a2d5a719b16ea4418",
+    "scripts/run_resume_validation.py": "5e3a5457c5b263b878be1e81cbe1e4d18a12fc74b48378649614f748050d150b",
+    "scripts/run_sampling_smoke.py": "af759d615cb310ab35cda41ac6a3671f4879df46cf6fbca290daa339df00a70b",
+    "scripts/run_synthetic_optimization.py": "4ab436550b7c81719c21e6529ebf622c52c97071328d8dd3750b55144d2c6461",
+    "scripts/sample.py": "8b6f947263cd15774d4e06ad23b7bcf7a0992be186791f1f55b8c78778046af9",
+    "scripts/train_full_cifar10.py": "15b51906e9cc0d525327e7803ccc2a1f2ac7ffbbb3fe1cff5e60d895797e6b06"
+  }
+}

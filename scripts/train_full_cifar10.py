@@ -47,6 +47,7 @@ from diffusion_models.full_training import (
     sampling_steps,
 )
 from diffusion_models.models import CIFAR10UNet, primary_unet_config
+from diffusion_models.recovery import stage_checkpoint
 
 
 def file_sha256(path: Path) -> str:
@@ -170,6 +171,7 @@ def main() -> int:
     parser.add_argument("--output-dir", required=True)
     parser.add_argument("--segment-end", required=True, type=int)
     parser.add_argument("--resume")
+    parser.add_argument("--durable-dir", type=Path)
     args = parser.parse_args()
 
     config_path = repository_path(args.config)
@@ -354,6 +356,21 @@ def main() -> int:
                 generators={"training": training_generator},
                 cuda_devices=[device.index or 0],
             )
+            if args.durable_dir:
+                stage_checkpoint(
+                    checkpoint_path,
+                    args.durable_dir / "checkpoints" / checkpoint_path.name,
+                )
+                # Immutable log prefix pairs with this exact snapshot.
+                from diffusion_models.recovery import atomic_publish
+
+                atomic_publish(
+                    args.durable_dir / "logs" / f"metrics_step_{step:06d}.jsonl",
+                    lambda handle: handle.write(metrics_path.read_bytes()),
+                    lambda path, boundary=step: AppendOnlyJsonlLogger(
+                        path, expected_last_step=boundary
+                    ),
+                )
             checkpoint_records.append(
                 {
                     "step": step,

@@ -194,12 +194,12 @@ def save_training_checkpoint(
         ),
         "metadata": _validate_json_mapping(metadata or {}, name="metadata"),
     }
-    try:
-        with destination.open("xb") as handle:
-            torch.save(payload, handle)
-    except Exception:
-        destination.unlink(missing_ok=True)
-        raise
+    from diffusion_models.recovery import atomic_publish, read_checkpoint
+
+    atomic_publish(
+        destination, lambda handle: torch.save(payload, handle), read_checkpoint
+    )
+
     return destination
 
 

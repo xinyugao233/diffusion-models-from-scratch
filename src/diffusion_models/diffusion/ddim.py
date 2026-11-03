@@ -13,7 +13,7 @@ from diffusion_models.diffusion.ddpm import (
     _validate_noise,
     predict_x_start_from_noise,
 )
-from diffusion_models.diffusion.sampling import SamplingResult
+from diffusion_models.diffusion.sampling import SamplingResult, evaluation_mode
 from diffusion_models.diffusion.schedules import DDPMSchedule, extract
 
 
@@ -58,6 +58,7 @@ def ddim_timesteps(num_train_steps: int, num_inference_steps: int) -> tuple[int,
 
 
 @torch.no_grad()
+@evaluation_mode
 def ddim_step(
     model: nn.Module,
     x_t: Tensor,
@@ -121,6 +122,7 @@ def ddim_step(
 
 
 @torch.no_grad()
+@evaluation_mode
 def ddim_sample_loop(
     model: nn.Module,
     schedule: DDPMSchedule,
@@ -140,8 +142,10 @@ def ddim_sample_loop(
         raise ValueError(f"shape must be positive NCHW dimensions, got {shape}.")
     device = schedule.betas.device if device is None else torch.device(device)
     dtype = schedule.betas.dtype if dtype is None else dtype
-    if not torch.empty((), dtype=dtype).is_floating_point():
-        raise TypeError("Sampling dtype must be floating point.")
+    if dtype not in (torch.float32, torch.float64):
+        raise TypeError("Sampling supports float32 and float64 only.")
+    if any(p.dtype != dtype or p.device != device for p in model.parameters()):
+        raise TypeError("Model parameters must match sampling dtype and device.")
     if device != schedule.betas.device:
         raise ValueError("The sampling device and schedule device must match.")
 
@@ -161,12 +165,14 @@ def ddim_sample_loop(
 
     selected = ddim_timesteps(schedule.num_steps, num_inference_steps)
     captures = set(capture_timesteps)
-    allowed_captures = {schedule.num_steps, *selected}
+    allowed_captures = {schedule.num_steps, 0, *(t + 1 for t in selected[1:])}
     if any(
-        not isinstance(timestep, int) or timestep not in allowed_captures
+        type(timestep) is not int or timestep not in allowed_captures
         for timestep in captures
     ):
-        raise ValueError("capture_timesteps must be selected DDIM states.")
+        raise ValueError(
+            f"capture_timesteps must be selected DDIM states: {sorted(allowed_captures)}"
+        )
     trajectory: dict[int, Tensor] = {}
     if schedule.num_steps in captures:
         trajectory[schedule.num_steps] = sample.detach().clone()
@@ -185,7 +191,8 @@ def ddim_sample_loop(
             clip_x_start=clip_x_start,
         )
         sample = output.sample
-        if code_timestep in captures:
-            trajectory[code_timestep] = sample.detach().clone()
+        state_index = previous_timestep + 1
+        if state_index in captures:
+            trajectory[state_index] = sample.detach().clone()
 
     return SamplingResult(sample=sample, trajectory=trajectory)

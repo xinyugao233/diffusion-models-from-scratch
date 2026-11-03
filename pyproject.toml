@@ -14,6 +14,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+report = ["matplotlib"]
 dev = [
   "pytest>=8",
   "ruff>=0.6",
