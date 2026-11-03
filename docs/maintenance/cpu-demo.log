@@ -1,0 +1,46 @@
+Demo output: <diffusion-checkout>/outputs/cpu-demo
+{
+  "acceptance": {
+    "late_to_early_max_ratio": 0.8,
+    "window_size": 5
+  },
+  "attention_diagnostic": {
+    "first_output_projection_gradient_nonzero": true,
+    "first_qkv_gradient_nonzero": false,
+    "second_qkv_gradient_nonzero": true
+  },
+  "attention_in_smoke_model": false,
+  "command": "python scripts/run_synthetic_optimization.py --config configs/public_cpu_demo.json --output-dir outputs/cpu-demo",
+  "config_sha256": "94852087faccccb2d256a7f507798283e47cdb8a9f2f626beaf15088dc91a166",
+  "duration_seconds": 1.859541917219758,
+  "early_window_mean": 0.7734419107437134,
+  "environment": {
+    "device": "cpu",
+    "machine": "arm64",
+    "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+    "python": "3.13.2",
+    "pytorch": "2.15.0",
+    "torch_num_threads": 1
+  },
+  "final_gradient_norm": 0.06356176786624229,
+  "final_loss": 0.006091014947742224,
+  "first_logged_loss": 1.1447415351867676,
+  "git": {
+    "commit": "ee09627f6d2a3edf9a7137b4765c1bbfd64e62a4",
+    "working_tree_dirty": true
+  },
+  "initial_gradient_norm": 1.5313779529008467,
+  "late_to_early_ratio": 0.012356612512659713,
+  "late_window_mean": 0.009557121992111206,
+  "model_parameter_count": 491107,
+  "output": {
+    "metrics": "<diffusion-checkout>/outputs/cpu-demo/metrics.jsonl",
+    "summary": "<diffusion-checkout>/outputs/cpu-demo/summary.json"
+  },
+  "parameter_changed": true,
+  "passed": true,
+  "record_count": 39,
+  "relative_loss_decrease": 0.9876433874873403,
+  "repository": "<diffusion-checkout>",
+  "training_source_sha256": "86d30856931b8e933f02b71a201e10513170d98f15c8bbe1385f6edc20256287"
+}

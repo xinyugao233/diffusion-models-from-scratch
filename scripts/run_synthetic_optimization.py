@@ -58,9 +58,20 @@ def attention_gradient_diagnostic() -> dict[str, bool]:
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", required=True)
+    parser.add_argument(
+        "--output-dir", type=Path, help="New directory for demo evidence"
+    )
     args = parser.parse_args()
     config_path = repository_path(args.config)
     config = load_json(config_path)
+    if args.output_dir is not None:
+        output = args.output_dir.resolve()
+        output.mkdir(parents=True, exist_ok=False)
+        config["output"] = {
+            "metrics": str(output / "metrics.jsonl"),
+            "summary": str(output / "summary.json"),
+        }
+        print(f"Demo output: {output}")
     if config["device"] != "cpu" or config["model"] != "smoke_unet":
         raise ValueError("Gate A is frozen to the smoke U-Net on CPU.")
 
@@ -140,10 +151,12 @@ def main() -> int:
         and attention["second_qkv_gradient_nonzero"]
     )
     summary = {
+        "output": config["output"],
         "acceptance": config["acceptance"],
         "attention_diagnostic": attention,
         "attention_in_smoke_model": False,
-        "command": f".venv/bin/python scripts/{Path(__file__).name} --config {args.config}",
+        "command": f"python scripts/{Path(__file__).name} --config {args.config}"
+        + (f" --output-dir {args.output_dir}" if args.output_dir else ""),
         "config_sha256": sha256_file(config_path),
         "duration_seconds": duration,
         "early_window_mean": early_mean,

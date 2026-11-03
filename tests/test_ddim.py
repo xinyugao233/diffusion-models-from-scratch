@@ -117,7 +117,7 @@ def test_ddim_loop_is_deterministic_and_calls_model_exactly_once_per_step() -> N
         initial_noise.shape,
         num_inference_steps=4,
         initial_noise=initial_noise,
-        capture_timesteps=(10, 6, 0),
+        capture_timesteps=(10, 7, 0),
     )
     repeated = ddim_sample_loop(
         ConstantNoiseModel(value=0.1),
@@ -129,7 +129,7 @@ def test_ddim_loop_is_deterministic_and_calls_model_exactly_once_per_step() -> N
 
     assert model.calls == 4
     assert torch.equal(first.sample, repeated.sample)
-    assert list(first.trajectory) == [10, 6, 0]
+    assert list(first.trajectory) == [10, 7, 0]
     assert torch.equal(first.trajectory[10], initial_noise)
     assert torch.equal(first.trajectory[0], first.sample)
     assert torch.isfinite(first.sample).all()
@@ -172,4 +172,84 @@ def test_ddim_step_rejects_nonfinite_model_output() -> None:
             torch.tensor([1]),
             0,
             tiny_schedule(),
+        )
+
+
+def test_capture_labels_match_independent_analytic_states_and_rng():
+    schedule = make_linear_ddpm_schedule(num_steps=10, dtype=torch.float64)
+    initial = torch.full((1, 1, 1, 1), 0.4, dtype=torch.float64)
+    model = ConstantNoiseModel(0.25)
+    before = torch.get_rng_state().clone()
+    result = ddim_sample_loop(
+        model,
+        schedule,
+        initial.shape,
+        num_inference_steps=4,
+        initial_noise=initial,
+        clip_x_start=False,
+        capture_timesteps=(10, 7, 4, 1, 0),
+    )
+    a10 = float(schedule.alpha_bars[9])
+    a7 = float(schedule.alpha_bars[6])
+    clean = (0.4 - (1 - a10) ** 0.5 * 0.25) / a10**0.5
+    expected = a7**0.5 * clean + (1 - a7) ** 0.5 * 0.25
+    assert result.trajectory[7].item() == pytest.approx(expected, abs=1e-12)
+    assert list(result.trajectory) == [10, 7, 4, 1, 0]
+    assert torch.equal(before, torch.get_rng_state())
+    assert model.calls == 4
+    uncaptured = ddim_sample_loop(
+        model,
+        schedule,
+        initial.shape,
+        num_inference_steps=4,
+        initial_noise=initial,
+        clip_x_start=False,
+    )
+    assert torch.equal(result.sample, uncaptured.sample)
+    assert model.calls == 8
+
+
+def test_sampling_temporarily_disables_dropout_but_no_grad_does_not():
+    class DropoutModel(nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.dropout = nn.Dropout(0.5)
+
+        def forward(self, image, timesteps):
+            return self.dropout(image)
+
+    model = DropoutModel().train()
+    initial = torch.ones(1, 3, 4, 4)
+    with torch.no_grad():
+        assert not torch.equal(model(initial, None), model(initial, None))
+    schedule = make_linear_ddpm_schedule(num_steps=10)
+    before = torch.get_rng_state().clone()
+    first = ddim_sample_loop(
+        model, schedule, initial.shape, initial_noise=initial, num_inference_steps=4
+    )
+    second = ddim_sample_loop(
+        model, schedule, initial.shape, initial_noise=initial, num_inference_steps=4
+    )
+    assert torch.equal(first.sample, second.sample)
+    assert torch.equal(before, torch.get_rng_state())
+    assert model.training and model.dropout.training
+    assert not first.sample.requires_grad
+    with pytest.raises(ValueError):
+        ddim_sample_loop(model, schedule, initial.shape, num_inference_steps=1)
+    assert model.training and model.dropout.training
+
+
+def test_float64_unet_and_unsupported_sampling_dtype():
+    from diffusion_models.models import CIFAR10UNet, smoke_unet_config
+
+    model = CIFAR10UNet(smoke_unet_config()).double().eval()
+    image = torch.zeros(1, 3, 32, 32, dtype=torch.float64)
+    assert model(image, torch.tensor([0])).dtype == torch.float64
+    with pytest.raises(TypeError, match="float32 and float64"):
+        ddim_sample_loop(
+            model,
+            tiny_schedule(),
+            image.shape,
+            dtype=torch.float16,
+            num_inference_steps=2,
         )

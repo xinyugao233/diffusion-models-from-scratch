@@ -20,7 +20,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--output",
         type=Path,
-        default=Path("figures/cifar10_forward_process_seed0.png"),
+        default=Path("outputs/cifar10_forward_process_seed0.png"),
     )
     parser.add_argument("--image-index", type=int, default=0)
     parser.add_argument("--seed", type=int, default=0)
@@ -30,6 +30,8 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> None:
     args = parse_args()
+    if args.output.exists():
+        raise FileExistsError(f"Choose a new output path: {args.output}")
     dataset = load_cifar10(
         args.data_root,
         train=True,
@@ -59,7 +61,8 @@ def main() -> None:
         pad_value=1.0,
     )
     args.output.parent.mkdir(parents=True, exist_ok=True)
-    save_image(grid, args.output)
+    with args.output.open("xb") as handle:
+        save_image(grid, handle, format="PNG")
     print(
         f"Saved forward-process grid to {args.output} using image "
         f"{args.image_index}, seed {args.seed}, and timesteps {list(TIMESTEPS)}."

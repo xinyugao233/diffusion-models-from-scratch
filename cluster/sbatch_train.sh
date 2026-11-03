@@ -49,7 +49,7 @@ fi
 
 repository=/home/xggh8/projects/diffusion-models-from-scratch
 environment_root=/home/xggh8/data/diffusion-models-from-scratch/envs/torch-2.13.0
-persistent_root=/home/xggh8/data/diffusion-models-from-scratch/exp004-full-cifar10-ddpm-training/try01
+persistent_root=${PERSISTENT_ROOT:?Set PERSISTENT_ROOT to a new run or recovered continuation directory}
 persistent_stage="$persistent_root/$stage"
 run_directory="$job_scratch/run"
 
@@ -102,6 +102,7 @@ cd "$repository"
   --stage "$stage" \
   --output-dir "$run_directory" \
   --segment-end "$segment_end" \
+  --durable-dir "${DURABLE_ROOT:-$persistent_stage/durable}" \
   "${resume_arguments[@]}" \
   2>&1 | tee -a "$run_directory/logs/train_segment_${segment_end}.log"
 

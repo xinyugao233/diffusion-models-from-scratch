@@ -18,7 +18,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--output",
         type=Path,
-        default=Path("figures/cifar10_train_grid_seed0.png"),
+        default=Path("outputs/cifar10_train_grid_seed0.png"),
     )
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--num-images", type=int, default=64)
@@ -29,6 +29,8 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> None:
     args = parse_args()
+    if args.output.exists():
+        raise FileExistsError(f"Choose a new output path: {args.output}")
     if args.num_images <= 0 or args.nrow <= 0:
         raise ValueError("num-images and nrow must be positive.")
 
@@ -55,7 +57,8 @@ def main() -> None:
         pad_value=1.0,
     )
     args.output.parent.mkdir(parents=True, exist_ok=True)
-    save_image(grid, args.output)
+    with args.output.open("xb") as handle:
+        save_image(grid, handle, format="PNG")
 
     rows = math.ceil(args.num_images / args.nrow)
     print(
