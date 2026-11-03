@@ -165,8 +165,8 @@ python3.13 -m venv .venv
 The CPU suite covers data transforms, diffusion equations, U-Net dtype behavior,
 training, EMA/checkpoint restoration, explicit interrupted-log recovery,
 DDPM/DDIM sampling, inference bundles, and figure regression. CI also runs the
-literal installed public-demo entry point; hosted results for this maintenance
-branch are pending. [Verification record](docs/maintenance/verification.md).
+literal installed public-demo entry point; see the
+[hosted PR checks](https://github.com/xinyugao233/diffusion-models-from-scratch/pull/1/checks) for the current branch status. [Verification record](docs/maintenance/verification.md).
 
 ### Optional CIFAR-10 download examples
 

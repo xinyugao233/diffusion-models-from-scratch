@@ -20,8 +20,11 @@ The first screen now includes engineering highlights, a scoped benchmark
 number, navigation and the existing EMA sample grid. Historical figures and
 scientific measurements were preserved.
 
-Hosted CI: pending the publication commit. A local pass is not a hosted pass;
-the linked PR/Actions run will provide the authoritative hosted result.
+Publication: the `codex/public-maintenance` branch was pushed without force
+and [PR #1](https://github.com/xinyugao233/diffusion-models-from-scratch/pull/1) opened against `main`. It has not been merged.
+Hosted CPU check status and logs are available in the
+[PR checks](https://github.com/xinyugao233/diffusion-models-from-scratch/pull/1/checks); consult the run for the exact head commit.
+A local pass is not a hosted pass.
 
 Artifact publication remains unapproved. Inventory hashes describe verified
 local files, not public downloads. Repository names, existing license text,

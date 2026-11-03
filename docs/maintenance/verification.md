@@ -1,4 +1,7 @@
-# Maintenance verification — 2026-11-02
+# Initial local maintenance verification — 2026-11-02
+
+This record predates publication. See the [final review](publication-review.md)
+and [maintenance PR](https://github.com/xinyugao233/diffusion-models-from-scratch/pull/1) for subsequent publication and hosted checks.
 
 Local implementation is complete; publication, hosted CI and cluster durability
 are separate unverified actions. This is maintenance evidence, not a new GPU
